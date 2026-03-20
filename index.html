@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow"> <!-- Mencegah Google mengindeks website ini -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF & Image Tools</title>
+  <meta name="description" content="Alat PDF dan Gambar gratis berbasis browser. Kompres, konversi, tanda tangani, gabung, pisah, dan putar PDF/gambar secara lokal.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+<body>
+<!-- ══════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════ -->
+<header class="app-header">
+  <div class="container header-inner">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-layer-group"></i></div>
+      <h1 class="brand-title">PDF &amp; Image Tools</h1>
+    </div>
+    <div class="header-actions">
+      <span class="badge-secure"><i class="fa-solid fa-shield-check"></i> 100% Client-Side</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════════ -->
+<main class="container" style="padding-top:1.25rem;padding-bottom:2rem;display:flex;flex-direction:column;min-height:calc(100vh - 70px)">
+
+  <!-- Navigation Bar -->
+  <nav class="nav-bar" role="navigation" aria-label="Tool navigation">
+    <!-- Image Tools -->
+    <div class="nav-group image-group">
+      <span class="nav-label"><i class="fa-solid fa-image"></i> Image Tools</span>
+      <button class="nav-btn active" id="navBtnImgCompress" onclick="window.showPage('image-compress', this)">
+        <i class="fa-solid fa-compress" style="color:#4f46e5"></i> Compress
+      </button>
+      <button class="nav-btn" onclick="window.showPage('image-to-pdf', this)">
+        <i class="fa-solid fa-file-image" style="color:#0ea5e9"></i> To PDF
+      </button>
+      <button class="nav-btn" onclick="window.showPage('image-rotate', this)">
+        <i class="fa-solid fa-rotate" style="color:#06b6d4"></i> Rotate
+      </button>
+    </div>
+
+    <!-- PDF Tools -->
+    <div class="nav-group pdf-group">
+      <span class="nav-label"><i class="fa-solid fa-file-pdf"></i> PDF Tools</span>
+      <button class="nav-btn" onclick="window.showPage('pdf-sign', this)">
+        <i class="fa-solid fa-signature" style="color:#e11d48"></i> Sign PDF
+      </button>
+      <button class="nav-btn" onclick="window.showPage('pdf-compress', this)">
+        <i class="fa-solid fa-file-zipper" style="color:#0ea5e9"></i> Compress
+      </button>
+      <button class="nav-btn" onclick="window.showPage('pdf-organize', this)">
+        <i class="fa-solid fa-arrow-down-a-z" style="color:#f59e0b"></i> Organize
+      </button>
+      <button class="nav-btn" onclick="window.showPage('pdf-merge', this)">
+        <i class="fa-solid fa-object-group" style="color:#10b981"></i> Merge
+      </button>
+      <button class="nav-btn" onclick="window.showPage('pdf-split', this)">
+        <i class="fa-solid fa-scissors" style="color:#8b5cf6"></i> Split
+      </button>
+      <button class="nav-btn" onclick="window.showPage('pdf-rotate', this)">
+        <i class="fa-solid fa-rotate-right" style="color:#ef4444"></i> Rotate
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Card -->
+  <div class="main-card">
+
+    <!-- ─────────────────────────────────────────
+         PAGE: IMAGE COMPRESS
+    ───────────────────────────────────────── -->
+    <section id="page-image-compress" class="page-section active">
+      <!-- Hero Header -->
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge"><i class="fa-solid fa-compress"></i></div>
+          <h2 class="page-hero-title">Compress Gambar</h2>
+          <p class="page-hero-desc">Kompres gambar PNG, JPG, dan WebP secara batch langsung di browser. Tidak ada upload ke server, semua diproses secara lokal dan aman.</p>
+          <button class="btn-hero-select" onclick="document.getElementById('icInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih File Gambar
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="20" width="80" height="100" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+            <rect x="38" y="30" width="64" height="44" rx="4" fill="#c7d2fe"/>
+            <circle cx="70" cy="52" r="12" fill="#4f46e5" opacity=".7"/>
+            <path d="M62 52 L70 44 L78 52" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <rect x="38" y="82" width="40" height="6" rx="3" fill="#a5b4fc"/>
+            <rect x="38" y="94" width="26" height="6" rx="3" fill="#c7d2fe"/>
+            <rect x="110" y="40" width="60" height="76" rx="8" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>
+            <rect x="118" y="50" width="44" height="30" rx="4" fill="#bbf7d0"/>
+            <circle cx="140" cy="65" r="8" fill="#10b981" opacity=".7"/>
+            <rect x="118" y="88" width="28" height="5" rx="2.5" fill="#6ee7b7"/>
+            <rect x="118" y="99" width="18" height="5" rx="2.5" fill="#bbf7d0"/>
+            <path d="M90 90 L110 90" stroke="#4f46e5" stroke-width="2.5" stroke-dasharray="4 3" stroke-linecap="round"/>
+            <path d="M104 85 L110 90 L104 95" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tool-box" style="display: none;">
+        <!-- Loader -->
+        <div class="loader-overlay" id="icLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#4f46e5"></i>
+          <span id="icLoaderText">Memproses gambar...</span>
+        </div>
+
+        <!-- Hidden input -->
+        <input type="file" id="icInput" accept="image/png,image/jpeg,image/webp" multiple
+               class="hidden" style="display:none" onchange="ImgCompress.upload(event)">
+
+
+
+        <!-- Dropzone -->
+        <div class="dropzone" id="icDropzone">
+          <div class="drop-circle" onclick="document.getElementById('icInput').click()">
+            <i class="fa-solid fa-images"></i>
+            <span>Add Images<br><small>to Compress</small></span>
+          </div>
+        </div>
+
+        <!-- Workspace -->
+        <div class="grid-container" id="icWorkspace">
+
+          <div class="compress-controls">
+            <div>
+              <div class="control-label"><i class="fa-solid fa-sliders" style="color:#4f46e5"></i> Tingkat Kompresi</div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.4rem">
+                <div class="ic-level-card" data-level="low" onclick="ImgCompress.setLevel('low')">
+                  <i class="fa-solid fa-gauge-simple-high" style="color:#10b981"></i>
+                  <span style="font-weight:700;font-size:.78rem">Ringan</span>
+                  <small style="color:#94a3b8">Kualitas tinggi</small>
+                </div>
+                <div class="ic-level-card active" data-level="medium" onclick="ImgCompress.setLevel('medium')">
+                  <i class="fa-solid fa-gauge" style="color:#4f46e5"></i>
+                  <span style="font-weight:700;font-size:.78rem">Sedang</span>
+                  <small style="color:#94a3b8">Keseimbangan</small>
+                </div>
+                <div class="ic-level-card" data-level="high" onclick="ImgCompress.setLevel('high')">
+                  <i class="fa-solid fa-gauge-simple" style="color:#f59e0b"></i>
+                  <span style="font-weight:700;font-size:.78rem">Tinggi</span>
+                  <small style="color:#94a3b8">File lebih kecil</small>
+                </div>
+                <div class="ic-level-card" data-level="extreme" onclick="ImgCompress.setLevel('extreme')">
+                  <i class="fa-solid fa-bolt" style="color:#ef4444"></i>
+                  <span style="font-weight:700;font-size:.78rem">Ekstrim</span>
+                  <small style="color:#94a3b8">File terkecil</small>
+                </div>
+              </div>
+            </div>
+            <button class="btn-text" onclick="document.getElementById('icInput').click()">
+              <i class="fa-solid fa-plus"></i> Tambah Gambar
+            </button>
+          </div>
+          <div class="thumb-grid" id="icGrid"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="tool-footer">
+          <span class="footer-left" id="icCountText">0 file</span>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="ImgCompress.clear()" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnIcProcess" onclick="ImgCompress.process()" disabled>
+              <i class="fa-solid fa-file-zipper"></i> Compress All
+            </button>
+            <button class="btn-primary" id="btnIcDownloadAll" onclick="ImgCompress.downloadAll()" style="display:none; background:#0ea5e9;">
+              <i class="fa-solid fa-download"></i> Download Zip
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: IMAGE TO PDF
+    ───────────────────────────────────────── -->
+    <section id="page-image-to-pdf" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)"><i class="fa-solid fa-file-image"></i></div>
+          <h2 class="page-hero-title">Image to PDF</h2>
+          <p class="page-hero-desc">Ubah beberapa gambar JPG atau PNG menjadi satu file PDF. Geser untuk mengatur urutan halaman sebelum dikonversi.</p>
+          <button class="btn-hero-select" style="background:#0ea5e9" onclick="document.getElementById('i2pInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih Gambar
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="25" width="60" height="75" rx="6" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/>
+            <rect x="28" y="34" width="44" height="30" rx="3" fill="#bae6fd"/>
+            <circle cx="50" cy="77" r="6" fill="#0ea5e9" opacity=".6"/>
+            <rect x="28" y="71" width="44" height="5" rx="2.5" fill="#7dd3fc"/>
+            <rect x="60" y="40" width="60" height="75" rx="6" fill="#f0f9ff" stroke="#38bdf8" stroke-width="2"/>
+            <rect x="68" y="49" width="44" height="30" rx="3" fill="#e0f2fe"/>
+            <circle cx="90" cy="64" r="6" fill="#38bdf8" opacity=".6"/>
+            <rect x="68" y="86" width="44" height="5" rx="2.5" fill="#bae6fd"/>
+            <rect x="100" y="55" width="60" height="75" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+            <path d="M138 68 L138 105" stroke="#f97316" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M128 98 L138 108 L148 98" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tool-box" style="display: none;">
+        <div class="loader-overlay" id="i2pLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#0ea5e9"></i>
+          <span id="i2pLoaderText">Memuat gambar...</span>
+        </div>
+        <input type="file" id="i2pInput" accept="image/png,image/jpeg" multiple style="display:none" onchange="ImgToPdf.upload(event)">
+
+        <div class="dropzone" id="i2pDropzone">
+          <div class="drop-circle" onclick="document.getElementById('i2pInput').click()">
+            <i class="fa-solid fa-images"></i>
+            <span>Add Images<br><small>JPG atau PNG</small></span>
+          </div>
+        </div>
+
+        <div class="grid-container" id="i2pGridContainer">
+          <p class="grid-hint">Geser gambar untuk mengatur urutan halaman PDF.</p>
+          <div class="thumb-grid" id="i2pGrid"></div>
+          <div style="display:flex;justify-content:center;margin-top:1rem">
+            <button class="btn-trash" style="width:3rem;height:3rem;border-radius:50%;border:2px dashed #cbd5e1;background:transparent;color:#94a3b8;font-size:1.2rem"
+                    onclick="document.getElementById('i2pInput').click()" title="Tambah gambar">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="tool-footer">
+          <button class="btn-outline" onclick="document.getElementById('i2pInput').click()">Select Images</button>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="ImgToPdf.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnI2pProcess" onclick="ImgToPdf.process()" disabled>
+              <i class="fa-solid fa-file-pdf"></i> Convert to PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: IMAGE ROTATE
+    ───────────────────────────────────────── -->
+    <section id="page-image-rotate" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#06b6d4,#22d3ee)"><i class="fa-solid fa-rotate"></i></div>
+          <h2 class="page-hero-title">Rotate Gambar</h2>
+          <p class="page-hero-desc">Putar beberapa gambar sekaligus secara batch. Klik ikon putar pada setiap gambar atau putar semua sekaligus ke kiri atau kanan.</p>
+          <button class="btn-hero-select" style="background:#06b6d4" onclick="document.getElementById('irInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih Gambar
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="55" y="20" width="90" height="110" rx="8" fill="#ecfeff" stroke="#06b6d4" stroke-width="2"/>
+            <rect x="65" y="32" width="70" height="50" rx="4" fill="#cffafe"/>
+            <circle cx="100" cy="57" r="14" fill="#06b6d4" opacity=".5"/>
+            <rect x="65" y="90" width="44" height="6" rx="3" fill="#67e8f9"/>
+            <rect x="65" y="103" width="28" height="6" rx="3" fill="#cffafe"/>
+            <path d="M150 40 Q170 55 160 80" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M155 75 L160 81 L165 75" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M50 120 Q30 105 40 80" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M45 85 L40 79 L35 85" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tool-box" style="display: none;">
+        <div class="loader-overlay" id="irLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#06b6d4"></i>
+          <span id="irLoaderText">Memproses gambar...</span>
+        </div>
+        <input type="file" id="irInput" accept="image/png,image/jpeg,image/webp" multiple style="display:none" onchange="ImgRotate.upload(event)">
+
+        <div class="dropzone" id="irDropzone">
+          <div class="drop-circle" onclick="document.getElementById('irInput').click()">
+            <i class="fa-solid fa-image"></i>
+            <span>Add Images<br><small>to Rotate</small></span>
+          </div>
+        </div>
+
+        <div class="grid-container" id="irWorkspace">
+          <div class="rotate-controls">
+            <p style="font-size:.82rem;color:#94a3b8;margin:0">Klik ikon putar pada gambar, atau putar semua:</p>
+            <div class="rotate-btn-grp">
+              <button class="btn-rotate-dir" onclick="ImgRotate.rotateAll(-90)"><i class="fa-solid fa-rotate-left" style="color:#06b6d4"></i> Kiri Semua</button>
+              <button class="btn-rotate-dir" onclick="ImgRotate.rotateAll(90)">Kanan Semua <i class="fa-solid fa-rotate-right" style="color:#06b6d4"></i></button>
+              <button class="btn-text" onclick="document.getElementById('irInput').click()">
+                <i class="fa-solid fa-plus"></i> Tambah Gambar
+              </button>
+            </div>
+          </div>
+          <div class="thumb-grid" id="irGrid"></div>
+        </div>
+
+        <div class="tool-footer">
+          <span class="footer-left" id="irCountText">0 file</span>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="ImgRotate.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnIrProcess" onclick="ImgRotate.process()" disabled>
+              <i class="fa-solid fa-check"></i> Apply Rotation
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: SIGN PDF
+    ───────────────────────────────────────── -->
+    <section id="page-pdf-sign" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#e11d48,#f43f5e)"><i class="fa-solid fa-signature"></i></div>
+          <h2 class="page-hero-title">Sign PDF</h2>
+          <p class="page-hero-desc">Tambahkan tanda tangan atau stempel digital ke file PDF. Gambar tanda tangan langsung di browser atau upload file PNG transparan.</p>
+          <button class="btn-hero-select" style="background:#e11d48" onclick="document.getElementById('signInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih PDF
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="35" y="15" width="90" height="115" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+            <rect x="45" y="28" width="70" height="8" rx="4" fill="#fecdd3"/>
+            <rect x="45" y="43" width="70" height="5" rx="2.5" fill="#ffe4e6"/>
+            <rect x="45" y="53" width="55" height="5" rx="2.5" fill="#ffe4e6"/>
+            <rect x="45" y="63" width="60" height="5" rx="2.5" fill="#ffe4e6"/>
+            <rect x="45" y="73" width="40" height="5" rx="2.5" fill="#ffe4e6"/>
+            <rect x="45" y="90" width="70" height="25" rx="4" fill="white" stroke="#fda4af" stroke-width="1"/>
+            <path d="M53 105 Q60 95 67 103 Q74 111 81 101 Q88 91 95 103" stroke="#e11d48" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="155" cy="60" r="20" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+            <path d="M147 60 Q150 53 154 58 Q158 63 162 56 Q165 49 168 57" stroke="#e11d48" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Upload area -->
+      <div id="signUploadArea" class="tool-box" style="display: none;">
+        <input type="file" id="signInput" accept=".pdf" style="display:none" onchange="PdfSign.upload(event)">
+        <div class="dropzone">
+          <div class="drop-circle" style="--hover-color:#e11d48" onclick="document.getElementById('signInput').click()">
+            <i class="fa-solid fa-file-signature"></i>
+            <span>Pilih PDF<br><small>untuk ditandatangani</small></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loader -->
+      <div id="signLoader" class="hidden" style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:4rem;gap:.75rem">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:2.5rem;color:#e11d48"></i>
+        <span style="font-weight:600">Memuat editor...</span>
+      </div>
+
+      <!-- Workspace -->
+      <div class="sign-workspace" id="signWorkspace">
+        <!-- Left: page thumbs -->
+        <div class="sign-sidebar-left">
+          <div class="sidebar-header">Halaman</div>
+          <div class="thumb-scroll" id="signThumbContainer"></div>
+        </div>
+
+        <!-- Center: canvas -->
+        <div class="sign-center" id="signCenterPanel" onclick="window.clearSignSelection(event)">
+          <div class="sign-page-wrapper" id="signPageWrapper" style="width:0;height:0">
+            <canvas id="signPdfCanvas"></canvas>
+            <div id="signOverlayContainer"></div>
+          </div>
+        </div>
+
+        <!-- Right: tools -->
+        <div class="sign-sidebar-right">
+          <div class="sidebar-header" style="font-size:.85rem;font-weight:700;text-align:left;padding:.75rem 1rem">Sign Tools</div>
+          <div class="sign-tools-body">
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <button class="sign-tool-btn sig-btn" onclick="window.openSignModal('signature')">
+                <i class="fa-solid fa-signature"></i> + Tanda Tangan
+              </button>
+              <button class="sign-tool-btn stamp-btn" onclick="window.openSignModal('stamp')">
+                <i class="fa-solid fa-stamp"></i> + Stempel
+              </button>
+            </div>
+
+            <div>
+              <div class="gallery-label">Tanda Tangan Tersimpan</div>
+              <div id="savedSigsGallery"><span class="gallery-empty">Belum ada.</span></div>
+            </div>
+            <div>
+              <div class="gallery-label">Stempel Tersimpan</div>
+              <div id="savedStampsGallery"><span class="gallery-empty">Belum ada.</span></div>
+            </div>
+          </div>
+
+          <div class="sign-footer">
+            <button class="btn-sign-action" id="btnSignProcess" onclick="PdfSign.process()">
+              <i class="fa-solid fa-download"></i> Apply &amp; Download
+            </button>
+            <button class="btn-sign-cancel" onclick="PdfSign.clear()">Batal / Tutup</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: ORGANIZE PDF
+    ───────────────────────────────────────── -->
+    <section id="page-pdf-organize" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i class="fa-solid fa-arrow-down-a-z"></i></div>
+          <h2 class="page-hero-title">Organize PDF</h2>
+          <p class="page-hero-desc">Atur ulang halaman PDF dengan mudah. Geser halaman untuk mengubah urutan, atau hapus halaman yang tidak diperlukan.</p>
+          <button class="btn-hero-select" style="background:#f59e0b" onclick="document.getElementById('orgInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih PDF
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="20" width="50" height="70" rx="6" fill="#fefce8" stroke="#f59e0b" stroke-width="2"/>
+            <rect x="27" y="30" width="36" height="5" rx="2.5" fill="#fde68a"/>
+            <rect x="27" y="40" width="28" height="5" rx="2.5" fill="#fde68a"/>
+            <rect x="27" y="50" width="36" height="5" rx="2.5" fill="#fde68a"/>
+            <text x="40" y="80" font-size="14" fill="#f59e0b" font-weight="bold" text-anchor="middle">1</text>
+            <rect x="75" y="10" width="50" height="70" rx="6" fill="#fefce8" stroke="#f59e0b" stroke-width="2"/>
+            <rect x="82" y="20" width="36" height="5" rx="2.5" fill="#fde68a"/>
+            <rect x="82" y="30" width="22" height="5" rx="2.5" fill="#fde68a"/>
+            <rect x="82" y="40" width="36" height="5" rx="2.5" fill="#fde68a"/>
+            <text x="95" y="70" font-size="14" fill="#f59e0b" font-weight="bold" text-anchor="middle">2</text>
+            <rect x="130" y="20" width="50" height="70" rx="6" fill="#fefce8" stroke="#f59e0b" stroke-width="2"/>
+            <rect x="137" y="30" width="36" height="5" rx="2.5" fill="#fde68a"/>
+            <rect x="137" y="40" width="30" height="5" rx="2.5" fill="#fde68a"/>
+            <rect x="137" y="50" width="36" height="5" rx="2.5" fill="#fde68a"/>
+            <text x="150" y="80" font-size="14" fill="#f59e0b" font-weight="bold" text-anchor="middle">3</text>
+            <path d="M68 105 L100 120 L132 105" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tool-box" style="display: none;">
+        <div class="loader-overlay" id="orgLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#f59e0b"></i>
+          <span id="orgLoaderText">Memuat halaman...</span>
+        </div>
+        <input type="file" id="orgInput" accept=".pdf" style="display:none" onchange="PdfOrganize.upload(event)">
+
+        <div class="dropzone" id="orgDropzone">
+          <div class="drop-circle" onclick="document.getElementById('orgInput').click()">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add PDF</span>
+          </div>
+        </div>
+
+        <div class="grid-container" id="orgGridContainer">
+          <p class="grid-hint">Geser halaman untuk menyusun ulang. Klik × untuk menghapus.</p>
+          <div class="thumb-grid" id="orgGrid"></div>
+          <div style="display:flex;justify-content:center;margin-top:1rem">
+            <button class="btn-trash" style="width:3rem;height:3rem;border-radius:50%;border:2px dashed #cbd5e1;background:transparent;color:#94a3b8;font-size:1.2rem"
+                    onclick="document.getElementById('orgInput').click()" title="Tambah PDF lagi">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="tool-footer">
+          <button class="btn-outline" onclick="document.getElementById('orgInput').click()">Select PDF</button>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="PdfOrganize.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnOrgProcess" onclick="PdfOrganize.process()" disabled>
+              <i class="fa-solid fa-check"></i> Organize PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: MERGE PDF
+    ───────────────────────────────────────── -->
+    <section id="page-pdf-merge" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#10b981,#34d399)"><i class="fa-solid fa-object-group"></i></div>
+          <h2 class="page-hero-title">Merge PDF</h2>
+          <p class="page-hero-desc">Gabungkan beberapa file PDF menjadi satu dokumen. Geser file untuk menentukan urutan penggabungan yang diinginkan.</p>
+          <button class="btn-hero-select" style="background:#10b981" onclick="document.getElementById('mergeInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih File PDF
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="15" width="50" height="70" rx="6" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>
+            <rect x="27" y="25" width="36" height="5" rx="2.5" fill="#bbf7d0"/>
+            <rect x="27" y="35" width="24" height="5" rx="2.5" fill="#bbf7d0"/>
+            <rect x="27" y="45" width="36" height="5" rx="2.5" fill="#bbf7d0"/>
+            <rect x="60" y="30" width="50" height="70" rx="6" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>
+            <rect x="67" y="40" width="36" height="5" rx="2.5" fill="#bbf7d0"/>
+            <rect x="67" y="50" width="28" height="5" rx="2.5" fill="#bbf7d0"/>
+            <rect x="67" y="60" width="36" height="5" rx="2.5" fill="#bbf7d0"/>
+            <path d="M118 65 L138 65" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M132 58 L138 65 L132 72" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="140" y="20" width="45" height="85" rx="6" fill="#dcfce7" stroke="#10b981" stroke-width="2"/>
+            <rect x="147" y="30" width="31" height="5" rx="2.5" fill="#6ee7b7"/>
+            <rect x="147" y="40" width="24" height="5" rx="2.5" fill="#6ee7b7"/>
+            <rect x="147" y="50" width="31" height="5" rx="2.5" fill="#6ee7b7"/>
+            <rect x="147" y="60" width="18" height="5" rx="2.5" fill="#6ee7b7"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tool-box" style="display: none;">
+        <div class="loader-overlay" id="mergeLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#10b981"></i>
+          <span id="mergeLoaderText">Memuat file...</span>
+        </div>
+        <input type="file" id="mergeInput" accept=".pdf" multiple style="display:none" onchange="PdfMerge.upload(event)">
+
+        <div class="dropzone" id="mergeDropzone">
+          <div class="drop-circle" onclick="document.getElementById('mergeInput').click()">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add PDFs<br><small>to Merge</small></span>
+          </div>
+        </div>
+
+        <div class="grid-container" id="mergeGridContainer">
+          <p class="grid-hint">Geser file untuk mengatur urutan penggabungan.</p>
+          <div class="thumb-grid" id="mergeGrid"></div>
+          <div style="display:flex;justify-content:center;margin-top:1rem">
+            <button class="btn-trash" style="width:3rem;height:3rem;border-radius:50%;border:2px dashed #cbd5e1;background:transparent;color:#94a3b8;font-size:1.2rem"
+                    onclick="document.getElementById('mergeInput').click()">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="tool-footer">
+          <button class="btn-outline" onclick="document.getElementById('mergeInput').click()">Select PDFs</button>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="PdfMerge.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnMergeProcess" onclick="PdfMerge.process()" disabled>
+              <i class="fa-solid fa-layer-group"></i> Merge PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: SPLIT PDF
+    ───────────────────────────────────────── -->
+    <section id="page-pdf-split" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)"><i class="fa-solid fa-scissors"></i></div>
+          <h2 class="page-hero-title">Split / Extract PDF</h2>
+          <p class="page-hero-desc">Pisahkan halaman PDF atau ekstrak halaman tertentu. Ketik nomor halaman atau klik thumbnail untuk memilih halaman yang akan diekstrak.</p>
+          <button class="btn-hero-select" style="background:#8b5cf6" onclick="document.getElementById('splitInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih PDF
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="70" y="10" width="60" height="85" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+            <rect x="78" y="21" width="44" height="5" rx="2.5" fill="#ddd6fe"/>
+            <rect x="78" y="31" width="32" height="5" rx="2.5" fill="#ddd6fe"/>
+            <rect x="78" y="41" width="44" height="5" rx="2.5" fill="#ddd6fe"/>
+            <rect x="78" y="51" width="24" height="5" rx="2.5" fill="#ddd6fe"/>
+            <rect x="78" y="65" width="44" height="5" rx="2.5" fill="#c4b5fd"/>
+            <rect x="78" y="75" width="35" height="5" rx="2.5" fill="#c4b5fd"/>
+            <line x1="60" y1="62" x2="140" y2="62" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5 3"/>
+            <path d="M93 50 L100 58 L107 50" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="20" y="105" width="55" height="40" rx="5" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+            <rect x="125" y="105" width="55" height="40" rx="5" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tool-box" style="display: none;">
+        <div class="loader-overlay" id="splitLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#8b5cf6"></i>
+          <span id="splitLoaderText">Memuat halaman...</span>
+        </div>
+        <input type="file" id="splitInput" accept=".pdf" style="display:none" onchange="PdfSplit.upload(event)">
+
+        <div class="dropzone" id="splitDropzone">
+          <div class="drop-circle" onclick="document.getElementById('splitInput').click()">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add PDF<br><small>to Split</small></span>
+          </div>
+        </div>
+
+        <div class="grid-container" id="splitGridContainer">
+          <div class="split-controls">
+            <div>
+              <label style="font-size:.8rem;font-weight:700;color:#334155;display:block;margin-bottom:.35rem" class="dark:text-slate-200">
+                Halaman yang diekstrak (klik thumbnail atau ketik range):
+              </label>
+              <input type="text" class="split-input" id="splitRangeInput"
+                     placeholder="Contoh: 1, 3, 5-8"
+                     oninput="PdfSplit.handleRangeInput(this.value)">
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <input type="checkbox" id="splitMergeCheck" checked onchange="PdfSplit.updateInfo()"
+                     style="width:1rem;height:1rem;accent-color:#8b5cf6;cursor:pointer">
+              <label for="splitMergeCheck" style="font-size:.8rem;font-weight:500;cursor:pointer">
+                Gabungkan halaman yang dipilih menjadi 1 file PDF.
+              </label>
+            </div>
+            <div class="info-box" id="splitInfoBox" style="display:none">
+              <i class="fa-solid fa-circle-info"></i>
+              <p style="margin:0">Halaman dipilih akan dibuat menjadi file terpisah: <strong id="splitInfoCount">0 PDF</strong> (diunduh sebagai .zip).</p>
+            </div>
+          </div>
+          <div class="thumb-grid" id="splitGrid"></div>
+        </div>
+
+        <div class="tool-footer">
+          <button class="btn-outline" onclick="document.getElementById('splitInput').click()">Select PDF</button>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="PdfSplit.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnSplitProcess" onclick="PdfSplit.process()" disabled>
+              <i class="fa-solid fa-scissors"></i> Split (<span id="splitCount">0</span>)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: ROTATE PDF
+    ───────────────────────────────────────── -->
+    <section id="page-pdf-rotate" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#ef4444,#f87171)"><i class="fa-solid fa-rotate-right"></i></div>
+          <h2 class="page-hero-title">Rotate PDF</h2>
+          <p class="page-hero-desc">Putar halaman PDF secara individual atau sekaligus. Pilih PDF lalu klik tombol putar pada setiap halaman yang ingin dirotasi.</p>
+          <button class="btn-hero-select" style="background:#ef4444" onclick="document.getElementById('rotInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih PDF
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="20" width="70" height="90" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+            <rect x="50" y="32" width="50" height="35" rx="4" fill="#fecaca"/>
+            <rect x="50" y="74" width="40" height="6" rx="3" fill="#fca5a5"/>
+            <rect x="50" y="86" width="28" height="6" rx="3" fill="#fecaca"/>
+            <path d="M130 30 Q160 40 160 75 Q160 110 130 120" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M124 114 L130 121 L136 114" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M136 36 L130 29 L124 36" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tool-box" style="display: none;">
+        <div class="loader-overlay" id="rotLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#ef4444"></i>
+          <span id="rotLoaderText">Memuat halaman...</span>
+        </div>
+        <input type="file" id="rotInput" accept=".pdf" style="display:none" onchange="PdfRotate.upload(event)">
+
+        <div class="dropzone" id="rotDropzone">
+          <div class="drop-circle" onclick="document.getElementById('rotInput').click()">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add PDF<br><small>to Rotate</small></span>
+          </div>
+        </div>
+
+        <div class="grid-container" id="rotGridContainer">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+            <span style="font-size:.82rem;color:#94a3b8"><i class="fa-solid fa-rotate-right"></i> Klik tombol putar pada tiap halaman.</span>
+            <button class="btn-rotate-dir" onclick="PdfRotate.rotateAll()">
+              <i class="fa-solid fa-arrows-rotate"></i> Putar Semua (+90°)
+            </button>
+          </div>
+          <div class="thumb-grid" id="rotGrid"></div>
+        </div>
+
+        <div class="tool-footer">
+          <button class="btn-outline" onclick="document.getElementById('rotInput').click()">Select PDF</button>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="PdfRotate.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnRotProcess" onclick="PdfRotate.process()" disabled>
+              <i class="fa-solid fa-check"></i> Apply Rotation
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         PAGE: COMPRESS PDF
+    ───────────────────────────────────────── -->
+    <section id="page-pdf-compress" class="page-section">
+      <div class="page-hero">
+        <div class="page-hero-content">
+          <div class="page-hero-badge" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)"><i class="fa-solid fa-file-zipper"></i></div>
+          <h2 class="page-hero-title">Compress PDF</h2>
+          <p class="page-hero-desc">Kompres ukuran file PDF dengan merender ulang halaman ke kualitas yang lebih rendah. Pilih tingkat kompresi sesuai kebutuhan.</p>
+          <button class="btn-hero-select" style="background:#0ea5e9" onclick="document.getElementById('pcInput').click()">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih PDF
+          </button>
+        </div>
+        <div class="page-hero-illustration">
+          <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="15" width="65" height="85" rx="8" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="2"/>
+            <rect x="38" y="26" width="49" height="35" rx="4" fill="#bae6fd"/>
+            <rect x="38" y="68" width="36" height="5" rx="2.5" fill="#7dd3fc"/>
+            <rect x="38" y="79" width="24" height="5" rx="2.5" fill="#bae6fd"/>
+            <path d="M105 57 L120 57" stroke="#0ea5e9" stroke-width="2.5" stroke-dasharray="3 2" stroke-linecap="round"/>
+            <path d="M115 51 L121 57 L115 63" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="120" y="30" width="48" height="62" rx="8" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/>
+            <rect x="127" y="40" width="34" height="24" rx="3" fill="#bae6fd"/>
+            <rect x="127" y="71" width="24" height="4" rx="2" fill="#7dd3fc"/>
+            <rect x="127" y="80" width="16" height="4" rx="2" fill="#bae6fd"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tool-box" style="display: none;">
+
+        <!-- Loader -->
+        <div class="loader-overlay" id="pcLoader">
+          <i class="fa-solid fa-spinner fa-spin" style="color:#0ea5e9"></i>
+          <span id="pcLoaderText">Memproses...</span>
+        </div>
+
+        <!-- Hidden input -->
+        <input type="file" id="pcInput" accept=".pdf" style="display:none" onchange="PdfCompress.upload(event)">
+
+        <!-- Dropzone -->
+        <div class="dropzone" id="pcDropzone">
+          <div class="drop-circle" style="--hover-color:#0ea5e9" onclick="document.getElementById('pcInput').click()">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Pilih PDF<br><small>untuk dikompres</small></span>
+          </div>
+        </div>
+
+        <!-- Workspace -->
+        <div class="grid-container" id="pcWorkspace">
+          <!-- File info strip -->
+          <div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;margin-bottom:1rem;flex-wrap:wrap">
+            <i class="fa-solid fa-file-pdf" style="color:#0ea5e9;font-size:1.4rem;flex-shrink:0"></i>
+            <span id="pcFileName" style="font-weight:600;font-size:.9rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</span>
+          </div>
+
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem">
+            <div style="background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;padding:.85rem 1rem;text-align:center">
+              <div style="font-size:.72rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Ukuran Asli</div>
+              <div id="pcOriginalSize" style="font-size:1.1rem;font-weight:700;color:#334155">—</div>
+            </div>
+            <div style="background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;padding:.85rem 1rem;text-align:center">
+              <div style="font-size:.72rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Hasil Kompres</div>
+              <div id="pcResultSize" style="font-size:1.1rem;font-weight:700;color:#334155">—</div>
+            </div>
+            <div style="background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;padding:.85rem 1rem;text-align:center">
+              <div style="font-size:.72rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Penghematan</div>
+              <div id="pcRatio" style="font-size:1.1rem;font-weight:700">—</div>
+            </div>
+          </div>
+
+          <!-- Compression level -->
+          <div style="margin-bottom:1rem">
+            <label class="control-label" style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:700;margin-bottom:.5rem">
+              <i class="fa-solid fa-sliders" style="color:#0ea5e9"></i> Tingkat Kompresi
+            </label>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem">
+              <label class="pc-level-opt">
+                <input type="radio" name="pcLevel" id="pcLevel" value="low" style="display:none">
+                <div class="pc-level-card" onclick="PdfCompress._setLevel('low')" data-level="low">
+                  <i class="fa-solid fa-gauge-simple-high" style="color:#10b981"></i>
+                  <span style="font-weight:700;font-size:.82rem">Ringan</span>
+                  <small style="color:#94a3b8">Kualitas tinggi</small>
+                </div>
+              </label>
+              <label class="pc-level-opt">
+                <input type="radio" name="pcLevel" value="medium" style="display:none" checked>
+                <div class="pc-level-card active" onclick="PdfCompress._setLevel('medium')" data-level="medium">
+                  <i class="fa-solid fa-gauge" style="color:#0ea5e9"></i>
+                  <span style="font-weight:700;font-size:.82rem">Sedang</span>
+                  <small style="color:#94a3b8">Keseimbangan</small>
+                </div>
+              </label>
+              <label class="pc-level-opt">
+                <input type="radio" name="pcLevel" value="high" style="display:none">
+                <div class="pc-level-card" onclick="PdfCompress._setLevel('high')" data-level="high">
+                  <i class="fa-solid fa-gauge-simple" style="color:#f59e0b"></i>
+                  <span style="font-weight:700;font-size:.82rem">Tinggi</span>
+                  <small style="color:#94a3b8">File lebih kecil</small>
+                </div>
+              </label>
+              <label class="pc-level-opt">
+                <input type="radio" name="pcLevel" value="extreme" style="display:none">
+                <div class="pc-level-card" onclick="PdfCompress._setLevel('extreme')" data-level="extreme">
+                  <i class="fa-solid fa-bolt" style="color:#ef4444"></i>
+                  <span style="font-weight:700;font-size:.82rem">Ekstrem</span>
+                  <small style="color:#94a3b8">File terkecil</small>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div class="info-box" style="display:flex">
+            <i class="fa-solid fa-circle-info"></i>
+            <p style="margin:0">Kompresi dilakukan dengan merender ulang setiap halaman ke JPEG. PDF yang berisi banyak teks mungkin mengalami sedikit penurunan ketajaman teks.</p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="tool-footer">
+          <button class="btn-outline" onclick="document.getElementById('pcInput').click()">Select PDF</button>
+          <div class="footer-actions">
+            <button class="btn-trash" onclick="PdfCompress.clear()" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-primary" id="btnPcProcess" onclick="PdfCompress.process()" disabled>
+              <i class="fa-solid fa-file-zipper"></i> Compress PDF
+            </button>
+            <button class="btn-primary" id="btnPcDownload" onclick="PdfCompress.download()" style="display:none; background:#0ea5e9;">
+              <i class="fa-solid fa-download"></i> Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /main-card -->
+</main>
+
+<!-- ══════════════════════════════════════════════
+     MODAL: SIGN / STAMP CREATION
+════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="signModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="modal-title" id="signModalTitle">Tambah Tanda Tangan</h3>
+      <button class="btn-modal-close" onclick="window.closeSignModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="modal-tabs" id="signModalTabs">
+      <button class="modal-tab active" id="tabDraw" onclick="window.switchSignTab('draw')">Draw</button>
+      <button class="modal-tab" id="tabUpload" onclick="window.switchSignTab('upload')">Upload PNG</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Draw area -->
+      <div class="sig-draw-area" id="sigDrawArea">
+        <canvas id="signaturePadCanvas"></canvas>
+      </div>
+
+      <!-- Upload area -->
+      <div class="sig-upload-area" id="sigUploadArea">
+        <input type="file" id="signFileInput" accept="image/png" onchange="window.previewSignUpload(event)">
+        <div class="sig-placeholder" id="signFilePlaceholder">
+          <i class="fa-solid fa-upload"></i>
+          <span>Klik atau tarik file PNG</span>
+          <small>Background transparan direkomendasikan</small>
+        </div>
+        <img id="signFilePreview" src="" alt="Preview">
+      </div>
+
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn-clear-pad" id="btnClearPad" onclick="window.clearSignaturePad()">
+          <i class="fa-solid fa-eraser"></i> Bersihkan
+        </button>
+      </div>
+
+      <div class="modal-save-pref">
+        <input type="checkbox" id="saveSignPref" checked>
+        <label for="saveSignPref">Simpan untuk penggunaan berikutnya</label>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-btn cancel" onclick="window.closeSignModal()">Batal</button>
+      <button class="modal-btn confirm" onclick="window.applySignCreation()">Gunakan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODAL: DOWNLOAD / PREVIEW
+════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="downloadModal">
+  <div class="download-modal-card" style="padding:1.25rem;display:flex;flex-direction:column;gap:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <h3 style="margin:0;font-size:1.05rem;font-weight:700">Preview &amp; Simpan File</h3>
+      <button class="btn-modal-close" id="btnCloseDl"><i class="fa-solid fa-xmark text-2xl"></i></button>
+    </div>
+
+    <div class="preview-area" id="previewArea"></div>
+
+    <div class="preview-nav" id="previewNav">
+      <button class="btn-nav-page" id="btnPrevPage"><i class="fa-solid fa-chevron-left"></i></button>
+      <span class="preview-page-text" id="previewPageTxt">1 / 1</span>
+      <button class="btn-nav-page" id="btnNextPage"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <div class="download-form">
+      <p class="download-label">Beri nama file hasil:</p>
+      <div class="filename-row">
+        <div class="filename-group">
+          <input type="text" class="filename-input" id="dlFileName" value="document">
+          <span class="filename-ext" id="dlExt">.pdf</span>
+        </div>
+        <button class="btn-download" id="btnDownload">
+          <i class="fa-solid fa-download"></i> Unduh File
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     LIBRARIES
+════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+
+<!-- App Scripts -->
+<script src="js/app.js"></script>
+<script src="js/img-compress.js"></script>
+<script src="js/img-to-pdf.js"></script>
+<script src="js/img-rotate.js"></script>
+<script src="js/pdf-sign.js"></script>
+<script src="js/pdf-tools.js"></script>
+<script src="js/pdf-compress.js"></script>
+</body>
+</html>
