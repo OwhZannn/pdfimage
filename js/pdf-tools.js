@@ -3,6 +3,35 @@
    ========================================= */
 'use strict';
 
+function _formatPdfError(err) {
+  if (err && (err.name === 'PasswordException' || (err.message && /password/i.test(err.message)))) {
+    return 'PDF dilindungi kata sandi; buka proteksi terlebih dahulu.';
+  }
+  return err && err.message ? err.message : 'Terjadi kesalahan';
+}
+
+
+async function _confirmLargePdf(file) {
+  try {
+    const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+    const count = pdf.numPages;
+    if (count > 150) {
+      const result = await Swal.fire({
+        title: 'Konfirmasi',
+        text: `PDF ini memiliki ${count} halaman. Memproses banyak halaman mungkin lambat. Lanjutkan?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, lanjutkan',
+        cancelButtonText: 'Batal'
+      });
+      return result.isConfirmed;
+    }
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 // ── ORGANIZE PDF ──────────────────────────────────────────────────────────────
 const PdfOrganize = (() => {
   let state = { pdfFiles: {}, pages: [], sortable: null };
@@ -39,6 +68,17 @@ const PdfOrganize = (() => {
   async function upload(e) {
     if (!e.target.files[0]) return;
     const file = e.target.files[0];
+    const validation = window.validatePdfFile(file);
+    if (!validation.valid) {
+      Swal.fire('Error', validation.error, 'error');
+      e.target.value = '';
+      return;
+    }
+    // Check page count
+    if (!(await _confirmLargePdf(file))) {
+      e.target.value = '';
+      return;
+    }
     window.showToolbox('page-pdf-organize');
     document.getElementById('orgDropzone').style.display = 'none';
     window.showLoader('orgLoader'); window.setLoaderText('orgLoaderText', 'Memuat PDF...');
@@ -50,7 +90,7 @@ const PdfOrganize = (() => {
       state.pages = state.pages.concat(newPages);
       document.getElementById('orgGridContainer').classList.add('show');
       _render();
-    } catch { Swal.fire('Error', 'Gagal memuat PDF', 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err), 'error'); }
     finally { window.hideLoader('orgLoader'); e.target.value = ''; }
   }
 
@@ -60,6 +100,7 @@ const PdfOrganize = (() => {
   }
 
   function clear() {
+    if (state.sortable) { state.sortable.destroy(); }
     state = { pdfFiles: {}, pages: [], sortable: null };
     window.showHero('page-pdf-organize');
     document.getElementById('orgDropzone').style.display = '';
@@ -80,7 +121,7 @@ const PdfOrganize = (() => {
       }
       const out = await newPdf.save();
       window.triggerDownloadModal('organized_document', URL.createObjectURL(new Blob([out], { type: 'application/pdf' })), '.pdf', out);
-    } catch (err) { Swal.fire('Error', err.message, 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err)); }
     finally { window.hideLoader('orgLoader'); }
   }
 
@@ -113,18 +154,32 @@ const PdfMerge = (() => {
 
   async function upload(e) {
     if (!e.target.files.length) return;
+    const files = Array.from(e.target.files);
+    const validFiles = [];
+    for (const file of files) {
+      const validation = window.validatePdfFile(file);
+      if (!validation.valid) {
+        Swal.fire('Peringatan', validation.error + ' (' + file.name + ')', 'warning');
+      } else {
+        validFiles.push(file);
+      }
+    }
+    if (validFiles.length === 0) {
+      e.target.value = '';
+      return;
+    }
     window.showToolbox('page-pdf-merge');
     document.getElementById('mergeDropzone').style.display = 'none';
     window.showLoader('mergeLoader');
     try {
-      for (const file of e.target.files) {
+      for (const file of validFiles) {
         window.setLoaderText('mergeLoaderText', 'Memuat ' + file.name + '...');
         const data = await window.generatePdfThumbnails(file, 'mergeLoaderText', 1);
         state.files.push({ id: 'm_' + Date.now() + Math.random(), fileObj: file, thumb: data.thumbs[0], name: file.name });
       }
       document.getElementById('mergeGridContainer').classList.add('show');
       _render();
-    } catch { Swal.fire('Error', 'Gagal memuat PDF', 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err), 'error'); }
     finally { window.hideLoader('mergeLoader'); e.target.value = ''; }
   }
 
@@ -135,6 +190,7 @@ const PdfMerge = (() => {
   }
 
   function clear() {
+    if (state.sortable) { state.sortable.destroy(); }
     state = { files: [], sortable: null };
     window.showHero('page-pdf-merge');
     document.getElementById('mergeDropzone').style.display = '';
@@ -156,7 +212,7 @@ const PdfMerge = (() => {
       }
       const out = await merged.save();
       window.triggerDownloadModal('merged_document', URL.createObjectURL(new Blob([out], { type: 'application/pdf' })), '.pdf', out);
-    } catch (err) { Swal.fire('Error', err.message, 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err)); }
     finally { window.hideLoader('mergeLoader'); }
   }
 
@@ -181,7 +237,7 @@ const PdfSplit = (() => {
     return ranges.join(', ');
   }
 
-  function _render(updateInput) {
+  function _render(updateInput, focusIndex) {
     const grid = document.getElementById('splitGrid');
     grid.innerHTML = '';
     let selCount = 0, selIdx = [];
@@ -189,7 +245,16 @@ const PdfSplit = (() => {
       if (pg.selected) { selCount++; selIdx.push(i + 1); }
       const card = document.createElement('div');
       card.className = 'thumb-card' + (pg.selected ? ' selected' : '');
-      card.onclick = () => { pg.selected = !pg.selected; _render(true); };
+      card.onclick = () => { pg.selected = !pg.selected; _render(true, i); };
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-pressed', String(pg.selected));
+      card.onkeydown = event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          card.click();
+        }
+      };
       card.style.cursor = 'pointer';
       card.innerHTML = `
         <div class="thumb-img-wrap"><img src="${pg.image}" alt="Page ${i+1}"></div>
@@ -200,6 +265,7 @@ const PdfSplit = (() => {
     document.getElementById('splitCount').innerText = selCount;
     document.getElementById('btnSplitProcess').disabled = selCount === 0;
     _updateSplitInfo();
+    if (focusIndex != null) grid.children[focusIndex]?.focus();
   }
 
   function _updateSplitInfo() {
@@ -214,7 +280,19 @@ const PdfSplit = (() => {
 
   async function upload(e) {
     if (!e.target.files[0]) return;
-    state.file = e.target.files[0];
+    const file = e.target.files[0];
+    const validation = window.validatePdfFile(file);
+    if (!validation.valid) {
+      Swal.fire('Error', validation.error, 'error');
+      e.target.value = '';
+      return;
+    }
+    // Check page count
+    if (!(await _confirmLargePdf(file))) {
+      e.target.value = '';
+      return;
+    }
+    state.file = file;
     window.showToolbox('page-pdf-split');
     document.getElementById('splitDropzone').style.display = 'none';
     window.showLoader('splitLoader');
@@ -223,7 +301,7 @@ const PdfSplit = (() => {
       state.pages = data.thumbs.map((img, i) => ({ originalIndex: i, image: img, selected: false }));
       document.getElementById('splitGridContainer').classList.add('show');
       _render(true);
-    } catch { Swal.fire('Error', 'Gagal memuat PDF', 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err), 'error'); }
     finally { window.hideLoader('splitLoader'); e.target.value = ''; }
   }
 
@@ -243,6 +321,10 @@ const PdfSplit = (() => {
     });
     _render(false);
   }
+
+  function selectAll() { state.pages.forEach(page => page.selected = true); _render(true); }
+  function clearSelection() { state.pages.forEach(page => page.selected = false); _render(true); }
+  function invertSelection() { state.pages.forEach(page => page.selected = !page.selected); _render(true); }
 
   function clear() {
     state = { file: null, pages: [] };
@@ -279,11 +361,11 @@ const PdfSplit = (() => {
         const zipBlob = await zip.generateAsync({ type: 'blob' });
         window.triggerDownloadModal(state.file.name.replace('.pdf', '') + '_extracted', URL.createObjectURL(zipBlob), '.zip', null);
       }
-    } catch (err) { Swal.fire('Error', err.message, 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err)); }
     finally { window.hideLoader('splitLoader'); }
   }
 
-  return { upload, handleRangeInput, clear, process, updateInfo: _updateSplitInfo };
+  return { upload, handleRangeInput, selectAll, clearSelection, invertSelection, clear, process, updateInfo: _updateSplitInfo };
 })();
 
 window.PdfSplit = PdfSplit;
@@ -309,7 +391,19 @@ const PdfRotate = (() => {
 
   async function upload(e) {
     if (!e.target.files[0]) return;
-    state.file = e.target.files[0];
+    const file = e.target.files[0];
+    const validation = window.validatePdfFile(file);
+    if (!validation.valid) {
+      Swal.fire('Error', validation.error, 'error');
+      e.target.value = '';
+      return;
+    }
+    // Check page count
+    if (!(await _confirmLargePdf(file))) {
+      e.target.value = '';
+      return;
+    }
+    state.file = file;
     window.showToolbox('page-pdf-rotate');
     document.getElementById('rotDropzone').style.display = 'none';
     window.showLoader('rotLoader');
@@ -319,7 +413,7 @@ const PdfRotate = (() => {
       document.getElementById('rotGridContainer').classList.add('show');
       document.getElementById('btnRotProcess').disabled = false;
       _render();
-    } catch { Swal.fire('Error', 'Gagal memuat PDF', 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err), 'error'); }
     finally { window.hideLoader('rotLoader'); e.target.value = ''; }
   }
 
@@ -348,7 +442,7 @@ const PdfRotate = (() => {
       });
       const out = await pdfDoc.save();
       window.triggerDownloadModal(state.file.name.replace('.pdf', '') + '_rotated', URL.createObjectURL(new Blob([out], { type: 'application/pdf' })), '.pdf', out);
-    } catch (err) { Swal.fire('Error', err.message, 'error'); }
+    } catch (err) { Swal.fire('Error', _formatPdfError(err)); }
     finally { window.hideLoader('rotLoader'); }
   }
 

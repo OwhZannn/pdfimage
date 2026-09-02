@@ -3,6 +3,14 @@
    ========================================= */
 'use strict';
 
+function _formatPdfError(err) {
+  if (err && (err.name === 'PasswordException' || (err.message && /password/i.test(err.message)))) {
+    return 'PDF dilindungi kata sandi; buka proteksi terlebih dahulu.';
+  }
+  return err && err.message ? err.message : 'Terjadi kesalahan';
+}
+
+
 // ─── State (module-level, accessible by all inner funcs) ────────────────────
 const _signState = {
   file: null, pdfBytes: null, pdfDoc: null,
@@ -209,6 +217,7 @@ function _addItemToPage(dataUrl, itemType) {
       pageNum: _signState.currentPage,
       itemType: itemType || 'signature',
       dataUrl,
+      renderScale: _signState.scale,
       x: (wrapper.offsetWidth / 2) - (initW / 2),
       y: (wrapper.offsetHeight / 2) - (initW * ratio / 2),
       w: initW, h: initW * ratio
@@ -339,6 +348,12 @@ window.previewSignUpload = function(e) {
     img.style.display = 'block';
     ph.style.display = 'none';
   };
+  reader.onerror = reader.onabort = function() {
+    e.target.value = '';
+    document.getElementById('signFilePreview').style.display = 'none';
+    document.getElementById('signFilePlaceholder').style.display = '';
+    Swal.fire('Error', 'Gagal membaca file tanda tangan.', 'error');
+  };
   reader.readAsDataURL(file);
 };
 
@@ -368,11 +383,11 @@ window.applySignCreation = function() {
     if (_signState.modalType === 'signature') {
       _signState.savedSignatures = _signState.savedSignatures || [];
       _signState.savedSignatures.push(dataUrl);
-      try { localStorage.setItem('savedSignatures', JSON.stringify(_signState.savedSignatures)); } catch(e){}
+      try { localStorage.setItem('savedSignatures', JSON.stringify(_signState.savedSignatures)); } catch(e){ Swal.fire('Peringatan', 'Tanda tangan tidak dapat disimpan di perangkat ini.', 'warning'); }
     } else {
       _signState.savedStamps = _signState.savedStamps || [];
       _signState.savedStamps.push(dataUrl);
-      try { localStorage.setItem('savedStamps', JSON.stringify(_signState.savedStamps)); } catch(e){}
+      try { localStorage.setItem('savedStamps', JSON.stringify(_signState.savedStamps)); } catch(e){ Swal.fire('Peringatan', 'Tanda tangan tidak dapat disimpan di perangkat ini.', 'warning'); }
     }
     _renderSignGallery();
   }
@@ -385,6 +400,12 @@ async function _signUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
   e.target.value = '';
+
+  const validation = window.validatePdfFile(file);
+  if (!validation.valid) {
+    Swal.fire('Error', validation.error, 'error');
+    return;
+  }
 
   _signState.file = file;
   _signState.items = [];
@@ -410,7 +431,7 @@ async function _signUpload(e) {
   } catch (err) {
     _signHideLoader();
     window.showHero('page-pdf-sign');
-    Swal.fire('Error', 'Gagal memuat PDF: ' + (err.message || err), 'error');
+    Swal.fire('Error', _formatPdfError(err));
   }
 }
 
@@ -457,11 +478,12 @@ async function _signProcess() {
       const vp = renderedPage.getViewport({ scale: 1 });
 
       // Convert screen coords to PDF coords
+      const scale = item.renderScale || _signState.scale;
       const nativeH = vp.height;
-      const tx = item.x / _signState.scale;
-      const ty = nativeH - (item.y / _signState.scale) - (item.h / _signState.scale);
-      const tw = item.w / _signState.scale;
-      const th = item.h / _signState.scale;
+      const tx = item.x / scale;
+      const ty = nativeH - (item.y / scale) - (item.h / scale);
+      const tw = item.w / scale;
+      const th = item.h / scale;
 
       // Fetch image bytes from data URL
       const resp = await fetch(item.dataUrl);

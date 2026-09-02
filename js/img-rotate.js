@@ -35,11 +35,27 @@ const ImgRotate = (() => {
       window.showToolbox('page-image-rotate');
       document.getElementById('irDropzone').style.display = 'none';
       document.getElementById('irWorkspace').classList.add('show');
-      Array.from(e.target.files).forEach(file => {
+      const files = Array.from(e.target.files);
+      let hasError = false;
+      files.forEach(file => {
+        const validation = window.validateImageFile(file);
+        if (!validation.valid) {
+          Swal.fire('Peringatan', validation.error, 'warning');
+          hasError = true;
+          return;
+        }
         const reader = new FileReader();
         reader.onload = ev => {
           state.files.push({ id: 'ir_' + Date.now() + Math.random(), fileObj: file, thumb: ev.target.result, name: file.name, angle: 0 });
           _render();
+        };
+        reader.onerror = function() {
+          Swal.fire('Error', 'Gagal membaca file: ' + file.name, 'error');
+          hasError = true;
+        };
+        reader.onabort = function() {
+          Swal.fire('Error', 'Pembacaan file dibatalkan: ' + file.name, 'error');
+          hasError = true;
         };
         reader.readAsDataURL(file);
       });
@@ -63,6 +79,7 @@ const ImgRotate = (() => {
     },
 
     clear() {
+      if (state.sortable) { state.sortable.destroy(); }
       state = { files: [], sortable: null };
       window.showHero('page-image-rotate');
       document.getElementById('irDropzone').style.display = '';

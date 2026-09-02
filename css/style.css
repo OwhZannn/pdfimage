@@ -2,7 +2,29 @@
    PDF & Image Tools - Main Stylesheet
    ========================================= */
 
-/* === Base === */
+/* === Accessibility Focus Rings === */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex="0"]:focus-visible,
+.drop-circle:focus-visible,
+.ic-level-card:focus-visible,
+.pc-level-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.dark button:focus-visible,
+.dark input:focus-visible,
+.dark select:focus-visible,
+.dark textarea:focus-visible,
+.dark [tabindex="0"]:focus-visible,
+.dark .drop-circle:focus-visible,
+.dark .ic-level-card:focus-visible,
+.dark .pc-level-card:focus-visible {
+  outline-color: var(--primary-light);
+}
 *, *::before, *::after { box-sizing: border-box; }
 
 :root {
@@ -12,12 +34,23 @@
   --radius: 1rem;
   --transition: 0.2s ease;
   --font: 'Plus Jakarta Sans', sans-serif;
+  --card-bg: #f8fafc;
+  --border: #e2e8f0;
+  --text-main: #334155;
+  --text-muted: #94a3b8;
 }
 
-body {
-  font-family: var(--font);
+html.dark, body.dark {
+  --card-bg: #1e293b;
+  --border: #334155;
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+}
+
+body, html.dark body {
   min-height: 100vh;
   margin: 0;
+  font-family: var(--font);
   background:
     radial-gradient(ellipse at 0% 0%, rgba(99,102,241,0.18) 0%, transparent 50%),
     radial-gradient(ellipse at 100% 0%, rgba(14,165,233,0.15) 0%, transparent 50%),
@@ -28,7 +61,7 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-body.dark {
+html.dark body, body.dark {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: #e2e8f0;
 }
@@ -136,8 +169,8 @@ body.dark {
 .dark .btn-icon:hover { background: #334155; color: #e2e8f0; }
 
 .sun-icon { display: none; }
-.dark .moon-icon { display: none; }
-.dark .sun-icon { display: block; color: #fbbf24; }
+.dark .moon-icon, html.dark .moon-icon { display: none; }
+.dark .sun-icon, html.dark .sun-icon { display: block; color: #fbbf24; }
 
 /* === Navigation Bar === */
 .nav-bar {
@@ -215,14 +248,14 @@ body.dark {
 .nav-btn:hover { background: #dbeafe; color: #1d4ed8; }
 .dark .nav-btn:hover { background: rgba(30,58,138,0.4); color: #60a5fa; }
 
-.nav-btn.active {
+.nav-btn.active, .nav-btn[aria-current="page"] {
   background: #eff6ff;
   color: #2563eb;
   font-weight: 600;
   box-shadow: inset 0 0 0 1px #bfdbfe;
 }
 
-.dark .nav-btn.active {
+.dark .nav-btn.active, .dark .nav-btn[aria-current="page"] {
   background: #0f172a;
   color: #60a5fa;
   box-shadow: inset 0 0 0 1px #1e3a5f;
@@ -281,6 +314,71 @@ body.dark {
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.dropzone.drag-over {
+  background: rgba(79, 70, 229, 0.08);
+}
+
+.dark .dropzone.drag-over {
+  background: rgba(79, 70, 229, 0.18);
+}
+
+.dropzone.drag-over .drop-circle {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: scale(1.06);
+  background: rgba(79, 70, 229, 0.05);
+}
+
+/* Tool specific drag-over highlights */
+#i2pDropzone.drag-over, #pcDropzone.drag-over {
+  background: rgba(14, 165, 233, 0.08);
+}
+#i2pDropzone.drag-over .drop-circle, #pcDropzone.drag-over .drop-circle {
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+}
+
+#irDropzone.drag-over {
+  background: rgba(6, 182, 212, 0.08);
+}
+#irDropzone.drag-over .drop-circle {
+  border-color: #06b6d4;
+  color: #06b6d4;
+}
+
+#orgDropzone.drag-over {
+  background: rgba(245, 158, 11, 0.08);
+}
+#orgDropzone.drag-over .drop-circle {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+#mergeDropzone.drag-over {
+  background: rgba(16, 185, 129, 0.08);
+}
+#mergeDropzone.drag-over .drop-circle {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+#splitDropzone.drag-over {
+  background: rgba(139, 92, 246, 0.08);
+}
+#splitDropzone.drag-over .drop-circle {
+  border-color: #8b5cf6;
+  color: #8b5cf6;
+}
+
+#rotDropzone.drag-over {
+  background: rgba(239, 68, 68, 0.08);
+}
+#rotDropzone.drag-over .drop-circle {
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 .drop-circle {
@@ -648,7 +746,13 @@ body.dark {
 
 #signPdfCanvas { display: block; background: white; }
 
-#signOverlayContainer { position: absolute; inset: 0; z-index: 10; overflow: hidden; }
+.sign-overlay-drop-surface { position: absolute; inset: 0; z-index: 10; overflow: hidden; transition: box-shadow 0.2s ease, outline 0.2s ease; }
+
+.sign-overlay-drop-surface.drag-over {
+  outline: 2px dashed #e11d48;
+  outline-offset: -4px;
+  box-shadow: inset 0 0 20px rgba(225, 29, 72, 0.15);
+}
 
 .sign-sidebar-right {
   width: 16rem;
@@ -848,13 +952,15 @@ body.dark {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15,23,42,0.8);
-  backdrop-filter: blur(4px);
+  background: rgba(15,23,42,0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 100;
   display: none;
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  transition: opacity 0.25s ease;
 }
 
 .modal-overlay.show { display: flex; }
@@ -1090,14 +1196,65 @@ body.dark {
 
 /* === Responsive === */
 @media (max-width: 640px) {
-  .sign-sidebar-left { width: 4.5rem; }
-  .sign-sidebar-right { display: none; }
+  .sign-workspace.show {
+    flex-direction: column;
+    min-height: auto;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  .sign-sidebar-left {
+    width: 100%;
+    height: 4.5rem;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    flex-direction: row;
+    align-items: center;
+  }
+  .dark .sign-sidebar-left { border-bottom-color: #334155; }
+  .sign-sidebar-left .sidebar-header {
+    display: none;
+  }
+  .sign-sidebar-left .thumb-scroll {
+    flex-direction: row;
+    padding: 0.35rem 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+  }
+  .sign-thumb-item {
+    width: 3.5rem;
+    flex-shrink: 0;
+    padding: 0.2rem;
+  }
+  .sign-thumb-item span {
+    font-size: 0.6rem;
+  }
+  .sign-center {
+    padding: 1rem;
+    min-height: 260px;
+    flex-grow: 1;
+  }
+  .sign-sidebar-right {
+    width: 100%;
+    max-height: 45vh;
+    border-left: none;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  }
+  .dark .sign-sidebar-right { border-top-color: #334155; }
+  .sign-tools-body {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+  .sign-footer {
+    padding: 0.6rem 0.75rem;
+  }
   .header-inner { padding: 0.75rem 1rem; }
   .badge-secure { display: none; }
   .page-section { padding: 1rem; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) and (min-width: 641px) {
   .sign-sidebar-right { width: 12rem; }
   .compress-controls { flex-direction: column; }
 }

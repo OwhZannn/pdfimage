@@ -71,11 +71,27 @@ const ImgCompress = (() => {
       window.showToolbox('page-image-compress');
       document.getElementById('icDropzone').style.display = 'none';
       document.getElementById('icWorkspace').classList.add('show');
-      Array.from(e.target.files).forEach(file => {
+      const files = Array.from(e.target.files);
+      let hasError = false;
+      files.forEach(file => {
+        const validation = window.validateImageFile(file);
+        if (!validation.valid) {
+          Swal.fire('Peringatan', validation.error, 'warning');
+          hasError = true;
+          return;
+        }
         const reader = new FileReader();
         reader.onload = ev => {
           state.files.push({ id: 'ic_' + Date.now() + Math.random(), fileObj: file, thumb: ev.target.result, name: file.name });
           _render();
+        };
+        reader.onerror = function() {
+          Swal.fire('Error', 'Gagal membaca file: ' + file.name, 'error');
+          hasError = true;
+        };
+        reader.onabort = function() {
+          Swal.fire('Error', 'Pembacaan file dibatalkan: ' + file.name, 'error');
+          hasError = true;
         };
         reader.readAsDataURL(file);
       });
@@ -89,6 +105,7 @@ const ImgCompress = (() => {
     },
 
     clear() {
+      if (state.sortable) { state.sortable.destroy(); }
       state = { files: [], sortable: null, level: state.level, originalSize: 0 };
       window.showHero('page-image-compress');
       document.getElementById('icDropzone').style.display = '';
@@ -103,10 +120,26 @@ const ImgCompress = (() => {
       if (!state.files.length) return;
       const quality = _qualityFromLevel(state.level);
       const maxSizeMB = _maxSizeFromLevel(state.level);
+      // Read dimension and format settings
+      const dimSelect = document.getElementById('icMaxDimSelect');
+      const formatSelect = document.getElementById('icFormatSelect');
+      const maxDim = dimSelect ? dimSelect.value : '1920';
+      const format = formatSelect ? formatSelect.value : 'auto'; // auto means keep original
       window.showLoader('icLoader');
       window.setLoaderText('icLoaderText', 'Memproses...');
       try {
-        const opts = { maxSizeMB, maxWidthOrHeight: 1920, useWebWorker: true, initialQuality: quality };
+        const opts = {
+          maxSizeMB,
+          useWebWorker: true,
+          initialQuality: quality
+        };
+        if (maxDim !== '0') {
+          opts.maxWidthOrHeight = parseInt(maxDim, 10);
+        }
+        // A value of 0 means no dimension cap.
+        if (format === 'jpeg') {
+          opts.fileType = 'image/jpeg';
+        }
         let totalOut = 0;
         
         if (state.files.length === 1) {
@@ -115,6 +148,7 @@ const ImgCompress = (() => {
           const compressed = await imageCompression(item.fileObj, opts);
           totalOut += compressed.size;
           item.compressedBlob = compressed;
+          item.outputType = compressed.type || (format === 'jpeg' ? 'image/jpeg' : item.fileObj.type);
         } else {
           for (let i = 0; i < state.files.length; i++) {
             const item = state.files[i];
@@ -122,14 +156,19 @@ const ImgCompress = (() => {
             const compressed = await imageCompression(item.fileObj, opts);
             totalOut += compressed.size;
             item.compressedBlob = compressed;
+            item.outputType = compressed.type || (format === 'jpeg' ? 'image/jpeg' : item.fileObj.type);
           }
         }
         
         document.getElementById('btnIcDownloadAll').style.display = '';
         _render();
+        window.hideLoader('icLoader');
+        // Optional: show success with size reduction
+        const totalIn = state.originalSize;
+        const reduction = totalIn > 0 ? ((1 - totalOut / totalIn) * 100).toFixed(1) : 0;
+        Swal.fire('Sukses', `Kompresi selesai! Total ukuran berkurang ${reduction}%.`, 'success');
       } catch (err) {
         Swal.fire('Error', err.message, 'error');
-      } finally {
         window.hideLoader('icLoader');
       }
     },
@@ -139,12 +178,19 @@ const ImgCompress = (() => {
     downloadItem(id) {
       const item = state.files.find(f => f.id === id);
       if (!item || !item.compressedBlob) return;
-      const ext = item.fileObj.type === 'image/png' ? '.png' : item.fileObj.type === 'image/webp' ? '.webp' : '.jpg';
-      const name = item.name.replace(/\\.[^/.]+$/, '') + '_compressed' + ext;
+      const type = item.outputType || item.fileObj.type;
+      let ext;
+      if (type === 'image/jpeg' || type === 'image/jpg') ext = '.jpg';
+      else if (type === 'image/png') ext = '.png';
+      else if (type === 'image/webp') ext = '.webp';
+      else ext = '.bin';
+      const name = item.name.replace(/\.[^/.]+$/, '') + '_compressed' + ext;
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(item.compressedBlob);
+      const url = URL.createObjectURL(item.compressedBlob);
+      a.href = url;
       a.download = name;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     },
 
     async downloadAll() {
@@ -161,8 +207,13 @@ const ImgCompress = (() => {
         for (const item of state.files) {
           if (!item.compressedBlob) continue;
           hasItems = true;
-          const ext = item.fileObj.type === 'image/png' ? '.png' : item.fileObj.type === 'image/webp' ? '.webp' : '.jpg';
-          zip.file(item.name.replace(/\\.[^/.]+$/, '') + '_compressed' + ext, item.compressedBlob);
+          const type = item.outputType || item.fileObj.type;
+          let ext;
+          if (type === 'image/jpeg' || type === 'image/jpg') ext = '.jpg';
+          else if (type === 'image/png') ext = '.png';
+          else if (type === 'image/webp') ext = '.webp';
+          else ext = '.bin';
+          zip.file(item.name.replace(/\.[^/.]+$/, '') + '_compressed' + ext, item.compressedBlob);
         }
         if (!hasItems) throw new Error('Belum ada gambar yang dikompresi!');
         const blob = await zip.generateAsync({ type: 'blob' });

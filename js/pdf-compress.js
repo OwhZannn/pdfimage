@@ -37,6 +37,12 @@ const PdfCompress = (() => {
   async function upload(e) {
     const file = e.target.files[0];
     if (!file) return;
+    const validation = window.validatePdfFile(file);
+    if (!validation.valid) {
+      Swal.fire('Error', validation.error, 'error');
+      e.target.value = '';
+      return;
+    }
     state.file = file;
     state.originalSize = file.size;
     window.showToolbox('page-pdf-compress');
@@ -56,23 +62,59 @@ const PdfCompress = (() => {
     if (!state.file) return;
     const level = state.level;
     const quality = _qualityFromLevel(level);
-    const scale = _scaleFromLevel(level);
+    const baseScale = _scaleFromLevel(level);
 
     window.showLoader('pcLoader');
     window.setLoaderText('pcLoaderText', 'Memuat PDF...');
 
     try {
       const buf = await state.file.arrayBuffer();
-      const pdfSrc = await pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+      let pdfSrc;
+      try {
+        pdfSrc = await pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+      } catch (err) {
+        if (err.name === 'PasswordException' || (err.message && err.message.includes('password'))) {
+          throw new Error('PDF dilindungi kata sandi. Harap buka proteksi terlebih dahulu.');
+        }
+        throw err;
+      }
       const total = pdfSrc.numPages;
 
+      // If more than 150 pages, ask for confirmation
+      if (total > 150) {
+        const result = await Swal.fire({
+          title: 'PDF memiliki lebih dari 150 halaman',
+          text: 'Kompresi PDF dengan banyak halaman dapat memakan waktu lama dan menggunakan banyak memori. Lanjutkan?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Lanjutkan',
+          cancelButtonText: 'Batal'
+        });
+        if (!result.isConfirmed) {
+          window.hideLoader('pcLoader');
+          return;
+        }
+      }
+
       const newPdf = await PDFLib.PDFDocument.create();
+      const maxPixels = 16777216; // 4096x4096
 
       for (let i = 1; i <= total; i++) {
         window.setLoaderText('pcLoaderText', `Kompresi halaman ${i} / ${total}...`);
 
-        // Render via pdf.js to canvas
         const page = await pdfSrc.getPage(i);
+        // Get original dimensions
+        const origVp = page.getViewport({ scale: 1 });
+        const pageW = origVp.width;
+        const pageH = origVp.height;
+
+        // Compute safe scale to not exceed maxPixels
+        let scale = baseScale;
+        const area = pageW * pageH * scale * scale;
+        if (area > maxPixels) {
+          scale = Math.min(baseScale, Math.sqrt(maxPixels / (pageW * pageH)));
+        }
+
         const vp = page.getViewport({ scale });
         const canvas = document.createElement('canvas');
         canvas.width = Math.round(vp.width);
@@ -84,12 +126,7 @@ const PdfCompress = (() => {
         const jpegBase64 = jpegDataUrl.split(',')[1];
         const jpegBytes = Uint8Array.from(atob(jpegBase64), c => c.charCodeAt(0));
 
-        // Original page dimensions (in PDF points = 1/72 inch)
-        const origVp = page.getViewport({ scale: 1 });
-        const pageW = origVp.width;
-        const pageH = origVp.height;
-
-        // Embed JPEG and draw full-page
+        // Embed JPEG and draw full-page using original dimensions
         const jpgImg = await newPdf.embedJpg(jpegBytes);
         const pdfPage = newPdf.addPage([pageW, pageH]);
         pdfPage.drawImage(jpgImg, { x: 0, y: 0, width: pageW, height: pageH });
@@ -106,10 +143,22 @@ const PdfCompress = (() => {
       ratioEl.textContent = Number(ratio) >= 0 ? `↓ ${ratio}%` : `↑ ${Math.abs(ratio)}%`;
       ratioEl.style.color = Number(ratio) >= 0 ? '#10b981' : '#f59e0b';
 
+      // Show info if output size is not smaller
+      if (outSize >= state.originalSize) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Ukuran file tidak mengecil',
+          text: 'Hasil kompresi tidak lebih kecil dari file asli. Anda tetap dapat mengunduh file yang sudah diproses.',
+          confirmButtonText: 'OK'
+        });
+      }
+
       state.compressedBytes = out;
       document.getElementById('btnPcDownload').style.display = '';
     } catch (err) {
-      Swal.fire('Error', err.message || 'Gagal mengompresi PDF', 'error');
+      // If we already handled password, use that message, else generic
+      const msg = err.message || 'Gagal mengompresi PDF';
+      Swal.fire('Error', msg, 'error');
     } finally {
       window.hideLoader('pcLoader');
     }
@@ -131,7 +180,7 @@ const PdfCompress = (() => {
 
   function download() {
     if (!state.compressedBytes) return;
-    const baseName = state.file.name.replace(/\\.pdf$/i, '');
+    const baseName = state.file.name.replace(/\.pdf$/i, '');
     window.triggerDownloadModal(
       baseName + '_compressed',
       URL.createObjectURL(new Blob([state.compressedBytes], { type: 'application/pdf' })),

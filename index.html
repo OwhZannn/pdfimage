@@ -12,12 +12,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer">
 
   <!-- App Styles -->
   <link rel="stylesheet" href="css/style.css">
 
-
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
 </head>
 
 <body>
@@ -31,6 +35,10 @@
       <h1 class="brand-title">PDF &amp; Image Tools</h1>
     </div>
     <div class="header-actions">
+      <button class="btn-icon" id="themeToggleBtn" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">
+        <i class="fa-solid fa-moon moon-icon"></i>
+        <i class="fa-solid fa-sun sun-icon"></i>
+      </button>
       <span class="badge-secure"><i class="fa-solid fa-shield-check"></i> 100% Client-Side</span>
     </div>
   </div>
@@ -46,7 +54,7 @@
     <!-- Image Tools -->
     <div class="nav-group image-group">
       <span class="nav-label"><i class="fa-solid fa-image"></i> Image Tools</span>
-      <button class="nav-btn active" id="navBtnImgCompress" onclick="window.showPage('image-compress', this)">
+      <button class="nav-btn active" id="navBtnImgCompress" aria-current="page" onclick="window.showPage('image-compress', this)">
         <i class="fa-solid fa-compress" style="color:#4f46e5"></i> Compress
       </button>
       <button class="nav-btn" onclick="window.showPage('image-to-pdf', this)">
@@ -132,7 +140,7 @@
 
         <!-- Dropzone -->
         <div class="dropzone" id="icDropzone">
-          <div class="drop-circle" onclick="document.getElementById('icInput').click()">
+          <div class="drop-circle" tabindex="0" role="button" aria-label="Tambah Gambar untuk Dikompres" onclick="document.getElementById('icInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('icInput').click(); }">
             <i class="fa-solid fa-images"></i>
             <span>Add Images<br><small>to Compress</small></span>
           </div>
@@ -145,28 +153,48 @@
             <div>
               <div class="control-label"><i class="fa-solid fa-sliders" style="color:#4f46e5"></i> Tingkat Kompresi</div>
               <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.4rem">
-                <div class="ic-level-card" data-level="low" onclick="ImgCompress.setLevel('low')">
+                <div class="ic-level-card" tabindex="0" role="button" aria-label="Tingkat Kompresi Ringan" data-level="low" onclick="ImgCompress.setLevel('low')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ImgCompress.setLevel('low');}">
                   <i class="fa-solid fa-gauge-simple-high" style="color:#10b981"></i>
                   <span style="font-weight:700;font-size:.78rem">Ringan</span>
-                  <small style="color:#94a3b8">Kualitas tinggi</small>
+                  <small style="color:var(--text-muted,#94a3b8)">Kualitas tinggi</small>
                 </div>
-                <div class="ic-level-card active" data-level="medium" onclick="ImgCompress.setLevel('medium')">
+                <div class="ic-level-card active" tabindex="0" role="button" aria-label="Tingkat Kompresi Sedang" data-level="medium" onclick="ImgCompress.setLevel('medium')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ImgCompress.setLevel('medium');}">
                   <i class="fa-solid fa-gauge" style="color:#4f46e5"></i>
                   <span style="font-weight:700;font-size:.78rem">Sedang</span>
-                  <small style="color:#94a3b8">Keseimbangan</small>
+                  <small style="color:var(--text-muted,#94a3b8)">Keseimbangan</small>
                 </div>
-                <div class="ic-level-card" data-level="high" onclick="ImgCompress.setLevel('high')">
+                <div class="ic-level-card" tabindex="0" role="button" aria-label="Tingkat Kompresi Tinggi" data-level="high" onclick="ImgCompress.setLevel('high')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ImgCompress.setLevel('high');}">
                   <i class="fa-solid fa-gauge-simple" style="color:#f59e0b"></i>
                   <span style="font-weight:700;font-size:.78rem">Tinggi</span>
-                  <small style="color:#94a3b8">File lebih kecil</small>
+                  <small style="color:var(--text-muted,#94a3b8)">File lebih kecil</small>
                 </div>
-                <div class="ic-level-card" data-level="extreme" onclick="ImgCompress.setLevel('extreme')">
+                <div class="ic-level-card" tabindex="0" role="button" aria-label="Tingkat Kompresi Ekstrim" data-level="extreme" onclick="ImgCompress.setLevel('extreme')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ImgCompress.setLevel('extreme');}">
                   <i class="fa-solid fa-bolt" style="color:#ef4444"></i>
                   <span style="font-weight:700;font-size:.78rem">Ekstrim</span>
-                  <small style="color:#94a3b8">File terkecil</small>
+                  <small style="color:var(--text-muted,#94a3b8)">File terkecil</small>
                 </div>
               </div>
             </div>
+
+            <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+              <div>
+                <label for="icMaxDimSelect" class="control-label" style="font-size:.78rem"><i class="fa-solid fa-expand" style="color:#4f46e5"></i> Dimensi Maksimal</label>
+                <select id="icMaxDimSelect" class="select-field" style="margin-top:.25rem">
+                  <option value="1920" selected>1920px</option>
+                  <option value="0">Asli</option>
+                  <option value="1280">1280px</option>
+                  <option value="800">800px</option>
+                </select>
+              </div>
+              <div>
+                <label for="icFormatSelect" class="control-label" style="font-size:.78rem"><i class="fa-solid fa-file-image" style="color:#4f46e5"></i> Format Output</label>
+                <select id="icFormatSelect" class="select-field" style="margin-top:.25rem">
+                  <option value="original" selected>Pertahankan</option>
+                  <option value="jpeg">JPEG</option>
+                </select>
+              </div>
+            </div>
+
             <button class="btn-text" onclick="document.getElementById('icInput').click()">
               <i class="fa-solid fa-plus"></i> Tambah Gambar
             </button>
@@ -178,7 +206,7 @@
         <div class="tool-footer">
           <span class="footer-left" id="icCountText">0 file</span>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="ImgCompress.clear()" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="ImgCompress.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnIcProcess" onclick="ImgCompress.process()" disabled>
               <i class="fa-solid fa-file-zipper"></i> Compress All
             </button>
@@ -227,18 +255,43 @@
         <input type="file" id="i2pInput" accept="image/png,image/jpeg" multiple style="display:none" onchange="ImgToPdf.upload(event)">
 
         <div class="dropzone" id="i2pDropzone">
-          <div class="drop-circle" onclick="document.getElementById('i2pInput').click()">
+          <div class="drop-circle" tabindex="0" role="button" aria-label="Tambah Gambar JPG atau PNG" onclick="document.getElementById('i2pInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('i2pInput').click(); }">
             <i class="fa-solid fa-images"></i>
             <span>Add Images<br><small>JPG atau PNG</small></span>
           </div>
         </div>
 
         <div class="grid-container" id="i2pGridContainer">
+          <div class="compress-controls" style="margin-bottom:1rem">
+            <div>
+              <label for="i2pPageSizeSelect" class="control-label" style="font-size:.78rem"><i class="fa-solid fa-file" style="color:#0ea5e9"></i> Ukuran Halaman</label>
+              <select id="i2pPageSizeSelect" class="select-field" style="margin-top:.25rem">
+                <option value="fit" selected>Fit gambar</option>
+                <option value="a4">A4</option>
+                <option value="letter">Letter</option>
+              </select>
+            </div>
+            <div>
+              <label for="i2pOrientationSelect" class="control-label" style="font-size:.78rem"><i class="fa-solid fa-arrows-rotate" style="color:#0ea5e9"></i> Orientasi</label>
+              <select id="i2pOrientationSelect" class="select-field" style="margin-top:.25rem">
+                <option value="auto" selected>Otomatis</option>
+                <option value="portrait">Potret</option>
+                <option value="landscape">Lanskap</option>
+              </select>
+            </div>
+            <div>
+              <label for="i2pMarginSelect" class="control-label" style="font-size:.78rem"><i class="fa-solid fa-border-all" style="color:#0ea5e9"></i> Margin</label>
+              <select id="i2pMarginSelect" class="select-field" style="margin-top:.25rem">
+                <option value="none" selected>Tidak ada</option>
+                <option value="normal">Normal</option>
+              </select>
+            </div>
+          </div>
           <p class="grid-hint">Geser gambar untuk mengatur urutan halaman PDF.</p>
           <div class="thumb-grid" id="i2pGrid"></div>
           <div style="display:flex;justify-content:center;margin-top:1rem">
             <button class="btn-trash" style="width:3rem;height:3rem;border-radius:50%;border:2px dashed #cbd5e1;background:transparent;color:#94a3b8;font-size:1.2rem"
-                    onclick="document.getElementById('i2pInput').click()" title="Tambah gambar">
+                    onclick="document.getElementById('i2pInput').click()" aria-label="Tambah gambar" title="Tambah gambar">
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
@@ -247,7 +300,7 @@
         <div class="tool-footer">
           <button class="btn-outline" onclick="document.getElementById('i2pInput').click()">Select Images</button>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="ImgToPdf.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="ImgToPdf.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnI2pProcess" onclick="ImgToPdf.process()" disabled>
               <i class="fa-solid fa-file-pdf"></i> Convert to PDF
             </button>
@@ -291,7 +344,7 @@
         <input type="file" id="irInput" accept="image/png,image/jpeg,image/webp" multiple style="display:none" onchange="ImgRotate.upload(event)">
 
         <div class="dropzone" id="irDropzone">
-          <div class="drop-circle" onclick="document.getElementById('irInput').click()">
+          <div class="drop-circle" tabindex="0" role="button" aria-label="Tambah Gambar untuk Diputar" onclick="document.getElementById('irInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('irInput').click(); }">
             <i class="fa-solid fa-image"></i>
             <span>Add Images<br><small>to Rotate</small></span>
           </div>
@@ -314,7 +367,7 @@
         <div class="tool-footer">
           <span class="footer-left" id="irCountText">0 file</span>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="ImgRotate.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="ImgRotate.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnIrProcess" onclick="ImgRotate.process()" disabled>
               <i class="fa-solid fa-check"></i> Apply Rotation
             </button>
@@ -356,7 +409,7 @@
       <div id="signUploadArea" class="tool-box" style="display: none;">
         <input type="file" id="signInput" accept=".pdf" style="display:none" onchange="PdfSign.upload(event)">
         <div class="dropzone">
-          <div class="drop-circle" style="--hover-color:#e11d48" onclick="document.getElementById('signInput').click()">
+          <div class="drop-circle" style="--hover-color:#e11d48" tabindex="0" role="button" aria-label="Pilih PDF untuk ditandatangani" onclick="document.getElementById('signInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('signInput').click(); }">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih PDF<br><small>untuk ditandatangani</small></span>
           </div>
@@ -381,7 +434,7 @@
         <div class="sign-center" id="signCenterPanel" onclick="window.clearSignSelection(event)">
           <div class="sign-page-wrapper" id="signPageWrapper" style="width:0;height:0">
             <canvas id="signPdfCanvas"></canvas>
-            <div id="signOverlayContainer"></div>
+            <div id="signOverlayContainer" class="sign-overlay-drop-surface"></div>
           </div>
         </div>
 
@@ -460,7 +513,7 @@
         <input type="file" id="orgInput" accept=".pdf" style="display:none" onchange="PdfOrganize.upload(event)">
 
         <div class="dropzone" id="orgDropzone">
-          <div class="drop-circle" onclick="document.getElementById('orgInput').click()">
+          <div class="drop-circle" tabindex="0" role="button" aria-label="Tambah PDF" onclick="document.getElementById('orgInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('orgInput').click(); }">
             <i class="fa-solid fa-plus"></i>
             <span>Add PDF</span>
           </div>
@@ -480,7 +533,7 @@
         <div class="tool-footer">
           <button class="btn-outline" onclick="document.getElementById('orgInput').click()">Select PDF</button>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="PdfOrganize.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="PdfOrganize.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnOrgProcess" onclick="PdfOrganize.process()" disabled>
               <i class="fa-solid fa-check"></i> Organize PDF
             </button>
@@ -530,7 +583,7 @@
         <input type="file" id="mergeInput" accept=".pdf" multiple style="display:none" onchange="PdfMerge.upload(event)">
 
         <div class="dropzone" id="mergeDropzone">
-          <div class="drop-circle" onclick="document.getElementById('mergeInput').click()">
+          <div class="drop-circle" tabindex="0" role="button" aria-label="Tambah PDF untuk Digabungkan" onclick="document.getElementById('mergeInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('mergeInput').click(); }">
             <i class="fa-solid fa-plus"></i>
             <span>Add PDFs<br><small>to Merge</small></span>
           </div>
@@ -541,7 +594,7 @@
           <div class="thumb-grid" id="mergeGrid"></div>
           <div style="display:flex;justify-content:center;margin-top:1rem">
             <button class="btn-trash" style="width:3rem;height:3rem;border-radius:50%;border:2px dashed #cbd5e1;background:transparent;color:#94a3b8;font-size:1.2rem"
-                    onclick="document.getElementById('mergeInput').click()">
+                    onclick="document.getElementById('mergeInput').click()" aria-label="Tambah PDF lagi" title="Tambah PDF lagi">
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
@@ -550,7 +603,7 @@
         <div class="tool-footer">
           <button class="btn-outline" onclick="document.getElementById('mergeInput').click()">Select PDFs</button>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="PdfMerge.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="PdfMerge.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnMergeProcess" onclick="PdfMerge.process()" disabled>
               <i class="fa-solid fa-layer-group"></i> Merge PDF
             </button>
@@ -596,7 +649,7 @@
         <input type="file" id="splitInput" accept=".pdf" style="display:none" onchange="PdfSplit.upload(event)">
 
         <div class="dropzone" id="splitDropzone">
-          <div class="drop-circle" onclick="document.getElementById('splitInput').click()">
+          <div class="drop-circle" tabindex="0" role="button" aria-label="Tambah PDF untuk Dipisahkan" onclick="document.getElementById('splitInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('splitInput').click(); }">
             <i class="fa-solid fa-plus"></i>
             <span>Add PDF<br><small>to Split</small></span>
           </div>
@@ -611,6 +664,11 @@
               <input type="text" class="split-input" id="splitRangeInput"
                      placeholder="Contoh: 1, 3, 5-8"
                      oninput="PdfSplit.handleRangeInput(this.value)">
+              <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem">
+                <button type="button" class="btn-outline" style="padding:.35rem .6rem;font-size:.75rem" onclick="PdfSplit.selectAll()">Pilih semua</button>
+                <button type="button" class="btn-outline" style="padding:.35rem .6rem;font-size:.75rem" onclick="PdfSplit.clearSelection()">Kosongkan</button>
+                <button type="button" class="btn-outline" style="padding:.35rem .6rem;font-size:.75rem" onclick="PdfSplit.invertSelection()">Balik pilihan</button>
+              </div>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
               <input type="checkbox" id="splitMergeCheck" checked onchange="PdfSplit.updateInfo()"
@@ -630,7 +688,7 @@
         <div class="tool-footer">
           <button class="btn-outline" onclick="document.getElementById('splitInput').click()">Select PDF</button>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="PdfSplit.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="PdfSplit.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnSplitProcess" onclick="PdfSplit.process()" disabled>
               <i class="fa-solid fa-scissors"></i> Split (<span id="splitCount">0</span>)
             </button>
@@ -672,7 +730,7 @@
         <input type="file" id="rotInput" accept=".pdf" style="display:none" onchange="PdfRotate.upload(event)">
 
         <div class="dropzone" id="rotDropzone">
-          <div class="drop-circle" onclick="document.getElementById('rotInput').click()">
+          <div class="drop-circle" tabindex="0" role="button" aria-label="Tambah PDF untuk Diputar" onclick="document.getElementById('rotInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('rotInput').click(); }">
             <i class="fa-solid fa-plus"></i>
             <span>Add PDF<br><small>to Rotate</small></span>
           </div>
@@ -691,7 +749,7 @@
         <div class="tool-footer">
           <button class="btn-outline" onclick="document.getElementById('rotInput').click()">Select PDF</button>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="PdfRotate.clear()"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="PdfRotate.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnRotProcess" onclick="PdfRotate.process()" disabled>
               <i class="fa-solid fa-check"></i> Apply Rotation
             </button>
@@ -708,7 +766,7 @@
         <div class="page-hero-content">
           <div class="page-hero-badge" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)"><i class="fa-solid fa-file-zipper"></i></div>
           <h2 class="page-hero-title">Compress PDF</h2>
-          <p class="page-hero-desc">Kompres ukuran file PDF dengan merender ulang halaman ke kualitas yang lebih rendah. Pilih tingkat kompresi sesuai kebutuhan.</p>
+          <p class="page-hero-desc">Kompres ukuran file PDF dengan merender halaman menjadi gambar JPEG. Catatan: Teks tidak dapat dipilih/dicari, anotasi/formulir hilang, dan hasil akhir pada PDF tertentu mungkin lebih besar.</p>
           <button class="btn-hero-select" style="background:#0ea5e9" onclick="document.getElementById('pcInput').click()">
             <i class="fa-solid fa-arrow-up-from-bracket"></i> Pilih PDF
           </button>
@@ -741,7 +799,7 @@
 
         <!-- Dropzone -->
         <div class="dropzone" id="pcDropzone">
-          <div class="drop-circle" style="--hover-color:#0ea5e9" onclick="document.getElementById('pcInput').click()">
+          <div class="drop-circle" style="--hover-color:#0ea5e9" tabindex="0" role="button" aria-label="Pilih PDF untuk dikompres" onclick="document.getElementById('pcInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); document.getElementById('pcInput').click(); }">
             <i class="fa-solid fa-file-pdf"></i>
             <span>Pilih PDF<br><small>untuk dikompres</small></span>
           </div>
@@ -752,22 +810,22 @@
           <!-- File info strip -->
           <div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;margin-bottom:1rem;flex-wrap:wrap">
             <i class="fa-solid fa-file-pdf" style="color:#0ea5e9;font-size:1.4rem;flex-shrink:0"></i>
-            <span id="pcFileName" style="font-weight:600;font-size:.9rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</span>
+            <span id="pcFileName" style="font-weight:600;font-size:.9rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-main,#334155)">—</span>
           </div>
 
           <!-- Stats -->
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem">
             <div style="background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;padding:.85rem 1rem;text-align:center">
-              <div style="font-size:.72rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Ukuran Asli</div>
-              <div id="pcOriginalSize" style="font-size:1.1rem;font-weight:700;color:#334155">—</div>
+              <div style="font-size:.72rem;color:var(--text-muted,#94a3b8);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Ukuran Asli</div>
+              <div id="pcOriginalSize" style="font-size:1.1rem;font-weight:700;color:var(--text-main,#334155)">—</div>
             </div>
             <div style="background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;padding:.85rem 1rem;text-align:center">
-              <div style="font-size:.72rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Hasil Kompres</div>
-              <div id="pcResultSize" style="font-size:1.1rem;font-weight:700;color:#334155">—</div>
+              <div style="font-size:.72rem;color:var(--text-muted,#94a3b8);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Hasil Kompres</div>
+              <div id="pcResultSize" style="font-size:1.1rem;font-weight:700;color:var(--text-main,#334155)">—</div>
             </div>
             <div style="background:var(--card-bg,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:.75rem;padding:.85rem 1rem;text-align:center">
-              <div style="font-size:.72rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Penghematan</div>
-              <div id="pcRatio" style="font-size:1.1rem;font-weight:700">—</div>
+              <div style="font-size:.72rem;color:var(--text-muted,#94a3b8);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem">Penghematan</div>
+              <div id="pcRatio" style="font-size:1.1rem;font-weight:700;color:var(--text-main,#334155)">—</div>
             </div>
           </div>
 
@@ -815,7 +873,7 @@
           <!-- Note -->
           <div class="info-box" style="display:flex">
             <i class="fa-solid fa-circle-info"></i>
-            <p style="margin:0">Kompresi dilakukan dengan merender ulang setiap halaman ke JPEG. PDF yang berisi banyak teks mungkin mengalami sedikit penurunan ketajaman teks.</p>
+            <p style="margin:0">Kompresi dilakukan dengan merender halaman menjadi gambar JPEG. Teks tidak lagi dapat dipilih atau dicari, anotasi/formulir akan hilang, dan ukuran file hasil dapat lebih besar pada PDF tertentu.</p>
           </div>
         </div>
 
@@ -823,7 +881,7 @@
         <div class="tool-footer">
           <button class="btn-outline" onclick="document.getElementById('pcInput').click()">Select PDF</button>
           <div class="footer-actions">
-            <button class="btn-trash" onclick="PdfCompress.clear()" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-trash" onclick="PdfCompress.clear()" aria-label="Hapus semua" title="Hapus semua"><i class="fa-solid fa-trash"></i></button>
             <button class="btn-primary" id="btnPcProcess" onclick="PdfCompress.process()" disabled>
               <i class="fa-solid fa-file-zipper"></i> Compress PDF
             </button>
@@ -845,12 +903,12 @@
   <div class="modal-card">
     <div class="modal-header">
       <h3 class="modal-title" id="signModalTitle">Tambah Tanda Tangan</h3>
-      <button class="btn-modal-close" onclick="window.closeSignModal()"><i class="fa-solid fa-xmark"></i></button>
+      <button class="btn-modal-close" aria-label="Tutup modal" title="Tutup modal" onclick="window.closeSignModal()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <div class="modal-tabs" id="signModalTabs">
-      <button class="modal-tab active" id="tabDraw" onclick="window.switchSignTab('draw')">Draw</button>
-      <button class="modal-tab" id="tabUpload" onclick="window.switchSignTab('upload')">Upload PNG</button>
+    <div class="modal-tabs" id="signModalTabs" role="tablist">
+      <button class="modal-tab active" id="tabDraw" role="tab" aria-selected="true" onclick="window.switchSignTab('draw')">Draw</button>
+      <button class="modal-tab" id="tabUpload" role="tab" aria-selected="false" onclick="window.switchSignTab('upload')">Upload PNG</button>
     </div>
 
     <div class="modal-body">
@@ -877,7 +935,7 @@
       </div>
 
       <div class="modal-save-pref">
-        <input type="checkbox" id="saveSignPref" checked>
+        <input type="checkbox" id="saveSignPref">
         <label for="saveSignPref">Simpan untuk penggunaan berikutnya</label>
       </div>
     </div>
@@ -892,19 +950,19 @@
 <!-- ══════════════════════════════════════════════
      MODAL: DOWNLOAD / PREVIEW
 ════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="downloadModal">
+<div class="modal-overlay" id="downloadModal" role="dialog" aria-modal="true" aria-labelledby="downloadModalTitle">
   <div class="download-modal-card" style="padding:1.25rem;display:flex;flex-direction:column;gap:1rem">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
-      <h3 style="margin:0;font-size:1.05rem;font-weight:700">Preview &amp; Simpan File</h3>
-      <button class="btn-modal-close" id="btnCloseDl"><i class="fa-solid fa-xmark text-2xl"></i></button>
+      <h3 id="downloadModalTitle" style="margin:0;font-size:1.05rem;font-weight:700">Preview &amp; Simpan File</h3>
+      <button class="btn-modal-close" id="btnCloseDl" aria-label="Tutup modal preview" title="Tutup modal preview"><i class="fa-solid fa-xmark text-2xl"></i></button>
     </div>
 
     <div class="preview-area" id="previewArea"></div>
 
     <div class="preview-nav" id="previewNav">
-      <button class="btn-nav-page" id="btnPrevPage"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="btn-nav-page" id="btnPrevPage" aria-label="Halaman sebelumnya" title="Halaman sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
       <span class="preview-page-text" id="previewPageTxt">1 / 1</span>
-      <button class="btn-nav-page" id="btnNextPage"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="btn-nav-page" id="btnNextPage" aria-label="Halaman berikutnya" title="Halaman berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 
     <div class="download-form">
@@ -925,12 +983,12 @@
 <!-- ══════════════════════════════════════════════
      LIBRARIES
 ════════════════════════════════════════════════ -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.all.min.js" integrity="sha384-nLoOnA/BDh8A/jxqtckg4DumuCGOBYUnNJLZdQz/zfYNp3wcjGSoWTAzgko06G/2" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js" integrity="sha384-dHP9fwqd9BAiDh9uJ0p10khgbbcFMh34bVEiCnJ1Ah/AT2T2k4t572VEo3WXzxXp" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js" integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.7/Sortable.min.js" integrity="sha384-DgmC6Xe2bSN2WjTDXzWYbUbxyhNP+NNkGDR/g78pCXV7E7rcVTGxVg0uIVCUUcBc" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 
 <!-- App Scripts -->

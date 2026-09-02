@@ -3,6 +3,29 @@
    ========================================= */
 'use strict';
 
+let _currentDownloadBlobUrl = null;
+let _downloadModalOpener = null;
+
+// ─── Validation Helpers ──────────────────────────────────────────────────────
+window.validateImageFile = function(file) {
+  const validTypes = ['image/png', 'image/jpeg', 'image/webp'];
+  if (!validTypes.includes(file.type)) {
+    return { valid: false, error: 'Format gambar tidak didukung. Gunakan PNG, JPEG, atau WEBP.' };
+  }
+  return { valid: true };
+};
+
+window.validatePdfFile = function(file) {
+  if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) {
+    return { valid: false, error: 'Hanya file PDF yang didukung.' };
+  }
+  const maxSize = 150 * 1024 * 1024; // 150 MB
+  if (file.size > maxSize) {
+    return { valid: false, error: 'Ukuran PDF terlalu besar. Maksimum 150 MB.' };
+  }
+  return { valid: true };
+};
+
 
 
 // ─── Navigation ──────────────────────────────────────────────────────────────
@@ -12,8 +35,14 @@ window.showPage = function (pageName, btnEl) {
   activePage = pageName;
 
   // Deactivate all nav buttons
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  if (btnEl) btnEl.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.remove('active');
+    b.removeAttribute('aria-current');
+  });
+  if (btnEl) {
+    btnEl.classList.add('active');
+    btnEl.setAttribute('aria-current', 'page');
+  }
 
   // Hide all pages
   document.querySelectorAll('.page-section').forEach(p => {
@@ -100,7 +129,20 @@ window.generatePdfThumbnails = async function (file, loaderTextId, maxPages = 0)
 let _previewPdf = null;
 let _previewPage = 1;
 
+function closeDownloadModal() {
+  if (_currentDownloadBlobUrl) {
+    URL.revokeObjectURL(_currentDownloadBlobUrl);
+    _currentDownloadBlobUrl = null;
+  }
+  document.getElementById('downloadModal').classList.remove('show');
+  if (_downloadModalOpener?.isConnected) _downloadModalOpener.focus();
+  _downloadModalOpener = null;
+}
+
 window.triggerDownloadModal = function (defaultName, blobUrl, extension, pdfBytes) {
+  if (_currentDownloadBlobUrl) { URL.revokeObjectURL(_currentDownloadBlobUrl); _currentDownloadBlobUrl = null; }
+  _downloadModalOpener = document.activeElement;
+  _currentDownloadBlobUrl = blobUrl;
   const modal = document.getElementById('downloadModal');
   const input = document.getElementById('dlFileName');
   const extSpan = document.getElementById('dlExt');
@@ -111,6 +153,7 @@ window.triggerDownloadModal = function (defaultName, blobUrl, extension, pdfByte
   input.value = defaultName;
   extSpan.innerText = extension;
   modal.classList.add('show');
+  btn.focus();
 
   if (extension === '.pdf' && pdfBytes) {
     nav.classList.add('show');
@@ -137,8 +180,40 @@ window.triggerDownloadModal = function (defaultName, blobUrl, extension, pdfByte
     const a = document.createElement('a');
     a.href = blobUrl; a.download = name + extension;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    modal.classList.remove('show');
+    closeDownloadModal();
   };
+};
+
+window.enableFileDrop = function(dropzoneId, inputId) {
+  const dropzone = document.getElementById(dropzoneId);
+  const input = document.getElementById(inputId);
+  if (!dropzone || !input) return;
+
+  const prevent = (e) => { e.preventDefault(); e.stopPropagation(); };
+  dropzone.addEventListener('dragenter', (e) => {
+    prevent(e);
+    dropzone.classList.add('drag-over');
+  });
+  dropzone.addEventListener('dragover', (e) => {
+    prevent(e);
+    dropzone.classList.add('drag-over');
+  });
+  dropzone.addEventListener('dragleave', (e) => {
+    prevent(e);
+    dropzone.classList.remove('drag-over');
+  });
+  dropzone.addEventListener('drop', (e) => {
+    prevent(e);
+    dropzone.classList.remove('drag-over');
+    const files = e.dataTransfer.files;
+    if (files.length) {
+      const dt = new DataTransfer();
+      const toAdd = input.multiple ? files : [files[0]];
+      for (const f of toAdd) dt.items.add(f);
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
 };
 
 async function renderDlPage(n) {
@@ -163,9 +238,42 @@ async function renderDlPage(n) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Theme toggle initialization
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', function () {
+      const isDark = document.documentElement.classList.toggle('dark');
+      document.body.classList.toggle('dark', isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  }
+
   document.getElementById('btnPrevPage').onclick = () => { if (_previewPage > 1) { _previewPage--; renderDlPage(_previewPage); } };
   document.getElementById('btnNextPage').onclick = () => { if (_previewPdf && _previewPage < _previewPdf.numPages) { _previewPage++; renderDlPage(_previewPage); } };
-  document.getElementById('btnCloseDl').onclick = () => document.getElementById('downloadModal').classList.remove('show');
+  document.getElementById('btnCloseDl').onclick = closeDownloadModal;
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && document.getElementById('downloadModal').classList.contains('show')) closeDownloadModal();
+  });
+  document.getElementById('downloadModal').addEventListener('click', event => {
+    if (event.target === event.currentTarget) closeDownloadModal();
+  });
+
+  // Wire dropzones
+  const pairs = [
+    ['icDropzone', 'icInput'],
+    ['i2pDropzone', 'i2pInput'],
+    ['irDropzone', 'irInput'],
+    ['page-pdf-sign', 'signInput'],
+    ['orgDropzone', 'orgInput'],
+    ['mergeDropzone', 'mergeInput'],
+    ['splitDropzone', 'splitInput'],
+    ['rotDropzone', 'rotInput'],
+    ['pcDropzone', 'pcInput']
+  ];
+  for (const [dz, inp] of pairs) {
+    window.enableFileDrop(dz, inp);
+  }
+  ['dragover', 'drop'].forEach(type => document.addEventListener(type, event => event.preventDefault()));
 
   // Activate first page on load
   window.showPage('image-compress', document.querySelector('.nav-btn'));
